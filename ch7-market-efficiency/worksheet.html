@@ -1699,7 +1699,7 @@
           if (card) {
             card.classList.add(s === 'revealed' ? 'state-revealed' : 'state-wrong');
             if (s === 'revealed') {
-              card.querySelectorAll('input, .tf-btn, .btn-check').forEach(el => { el.disabled = true; });
+              card.querySelectorAll('input, .tf-btn, .btn-check, .btn-hint').forEach(el => { el.disabled = true; });
               showExplanation(id);
             }
           }
@@ -1712,10 +1712,13 @@
       Object.keys(saConfig).forEach(id => {
         if (state[id] && state[id] !== 'idle') {
           // We don't store input values separately but we can restore from answers if correct
-          if (state[id] === 'correct') {
+          if (state[id] === 'correct' || state[id] === 'revealed') {
             saConfig[id].inputs.forEach((inp, i) => {
               const el = document.getElementById(inp);
-              if (el) el.value = saConfig[id].answers[i];
+              if (el) {
+                el.value = saConfig[id].answers[i];
+                el.classList.add('field-correct');
+              }
             });
           }
         }
