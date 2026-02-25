@@ -336,6 +336,29 @@
       cursor: not-allowed;
     }
 
+    /* Fix #4: Per-field feedback */
+    input.field-correct {
+      border-color: var(--correct) !important;
+      background: var(--correct-bg) !important;
+    }
+    input.field-wrong {
+      border-color: var(--wrong) !important;
+      background: var(--wrong-bg) !important;
+    }
+
+    /* Fix #8: Prompt badge */
+    .status-badge.prompt {
+      background: var(--hint-bg);
+      color: #8a6d00;
+      border: 1px solid #d4b84d;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-4px); }
+      40%, 80% { transform: translateX(4px); }
+    }
+
     .state-correct .input-group input {
       border-color: var(--correct);
       background: rgba(58,125,92,0.04);
@@ -766,11 +789,11 @@
       <div class="input-row">
         <div class="input-group">
           <label for="qa-price">Equilibrium Price ($)</label>
-          <input type="number" id="qa-price" placeholder="0" step="0.5" aria-label="Equilibrium price in dollars" />
+          <input type="number" id="qa-price" placeholder="—" step="0.5" aria-label="Equilibrium price in dollars" />
         </div>
         <div class="input-group">
           <label for="qa-qty">Equilibrium Quantity</label>
-          <input type="number" id="qa-qty" placeholder="0" step="0.5" aria-label="Equilibrium quantity" />
+          <input type="number" id="qa-qty" placeholder="—" step="0.5" aria-label="Equilibrium quantity" />
         </div>
       </div>
       <div class="action-row">
@@ -797,11 +820,11 @@
       <div class="input-row">
         <div class="input-group">
           <label for="qb-cs">Consumer Surplus ($)</label>
-          <input type="number" id="qb-cs" placeholder="0" step="0.5" aria-label="Consumer surplus in dollars" />
+          <input type="number" id="qb-cs" placeholder="—" step="0.5" aria-label="Consumer surplus in dollars" />
         </div>
         <div class="input-group">
           <label for="qb-ps">Producer Surplus ($)</label>
-          <input type="number" id="qb-ps" placeholder="0" step="0.5" aria-label="Producer surplus in dollars" />
+          <input type="number" id="qb-ps" placeholder="—" step="0.5" aria-label="Producer surplus in dollars" />
         </div>
       </div>
       <div class="action-row">
@@ -835,7 +858,7 @@
       <div class="input-row">
         <div class="input-group">
           <label for="qc-surplus">Excess Supply (units)</label>
-          <input type="number" id="qc-surplus" placeholder="0" step="0.5" aria-label="Excess supply in units" />
+          <input type="number" id="qc-surplus" placeholder="—" step="0.5" aria-label="Excess supply in units" />
         </div>
       </div>
       <div class="action-row">
@@ -862,11 +885,11 @@
       <div class="input-row">
         <div class="input-group">
           <label for="qd-cs">Consumer Surplus ($)</label>
-          <input type="number" id="qd-cs" placeholder="0" step="0.5" aria-label="New consumer surplus in dollars" />
+          <input type="number" id="qd-cs" placeholder="—" step="0.5" aria-label="New consumer surplus in dollars" />
         </div>
         <div class="input-group">
           <label for="qd-ps">Producer Surplus ($)</label>
-          <input type="number" id="qd-ps" placeholder="0" step="0.5" aria-label="New producer surplus in dollars" />
+          <input type="number" id="qd-ps" placeholder="—" step="0.5" aria-label="New producer surplus in dollars" />
         </div>
       </div>
       <div class="action-row">
@@ -895,7 +918,7 @@
       <div class="input-row">
         <div class="input-group">
           <label for="qe-dwl">Deadweight Loss ($)</label>
-          <input type="number" id="qe-dwl" placeholder="0" step="0.5" aria-label="Deadweight loss in dollars" />
+          <input type="number" id="qe-dwl" placeholder="—" step="0.5" aria-label="Deadweight loss in dollars" />
         </div>
       </div>
       <div class="action-row">
@@ -1438,15 +1461,43 @@
     }
 
     function checkSA(id) {
-      if (state[id] === 'correct') return;
+      if (state[id] === 'correct' || state[id] === 'revealed') return;
       const cfg = saConfig[id];
-      const vals = cfg.inputs.map(inp => parseNum(document.getElementById(inp).value));
+      const rawVals = cfg.inputs.map(inp => document.getElementById(inp).value.trim());
+      const touched = cfg.inputs.map(inp => document.getElementById(inp).dataset.touched === '1');
+      // Fix #1: Guard against empty/untouched fields
+      const anyEmpty = rawVals.some((v, i) => v === '' || (!touched[i] && v === '0'));
+      if (anyEmpty && rawVals.every(v => v === '' || v === '0')) {
+        shakeBadge(id, 'Enter a value first');
+        return;
+      }
+      const vals = rawVals.map(v => parseNum(v));
       const allCorrect = vals.every((v, i) => !isNaN(v) && Math.abs(v - cfg.answers[i]) <= cfg.tol);
+
+      // Fix #4: Per-field feedback on multi-input questions
+      cfg.inputs.forEach((inp, i) => {
+        const el = document.getElementById(inp);
+        el.classList.remove('field-correct', 'field-wrong');
+        if (!isNaN(vals[i]) && Math.abs(vals[i] - cfg.answers[i]) <= cfg.tol) {
+          el.classList.add('field-correct');
+        } else if (rawVals[i] !== '') {
+          el.classList.add('field-wrong');
+        }
+      });
 
       if (allCorrect) {
         markCorrect(id);
       } else {
         markWrong(id);
+      }
+      // Fix #3: On revealed, show correct answers in inputs
+      if (state[id] === 'revealed') {
+        cfg.inputs.forEach((inp, i) => {
+          const el = document.getElementById(inp);
+          el.value = cfg.answers[i];
+          el.classList.remove('field-wrong');
+          el.classList.add('field-correct');
+        });
       }
       saveState();
       updateProgress();
@@ -1467,9 +1518,10 @@
     }
 
     function checkMC(qid, correct) {
-      if (state[qid] === 'correct') return;
+      if (state[qid] === 'correct' || state[qid] === 'revealed') return;
       const pick = selected[qid];
-      if (!pick) return; // nothing selected
+      // Fix #8: Show feedback instead of silent return
+      if (!pick) { shakeBadge(qid, 'Select an answer'); return; }
 
       if (pick === correct) {
         markCorrect(qid);
@@ -1507,9 +1559,10 @@
     }
 
     function checkTF(qid, correct) {
-      if (state[qid] === 'correct') return;
+      if (state[qid] === 'correct' || state[qid] === 'revealed') return;
       const pick = selected[qid];
-      if (!pick) return;
+      // Fix #8: Show feedback instead of silent return
+      if (!pick) { shakeBadge(qid, 'Pick True or False'); return; }
 
       if (pick === correct) {
         markCorrect(qid);
@@ -1555,7 +1608,7 @@
           card.classList.add('state-revealed');
           card.querySelectorAll('input').forEach(el => { el.disabled = true; });
           card.querySelectorAll('.tf-btn').forEach(el => { el.disabled = true; });
-          card.querySelectorAll('.btn-check').forEach(el => { el.disabled = true; });
+          card.querySelectorAll('.btn-check, .btn-hint').forEach(el => { el.disabled = true; });
         }
         showHint(id);      // ensure hint visible
         showExplanation(id);
@@ -1599,10 +1652,36 @@
       }
     }
 
+    // Fix #8: Temporary prompt badge for empty submissions
+    function shakeBadge(id, msg) {
+      const badge = document.getElementById(`badge-${id}`);
+      if (!badge) return;
+      badge.className = 'status-badge prompt';
+      badge.textContent = msg;
+      badge.style.animation = 'none';
+      badge.offsetHeight; // reflow
+      badge.style.animation = 'shake 0.4s ease';
+      setTimeout(() => {
+        if (badge.classList.contains('prompt')) {
+          badge.className = 'status-badge';
+          badge.textContent = '';
+        }
+      }, 2500);
+    }
+
     /* ================================================================
        RESTORE SAVED STATE
     ================================================================ */
     function restoreAll() {
+      // Fix #2: Clear stale selections for questions that aren't locked
+      Object.keys(selected).forEach(qid => {
+        const s = state[qid];
+        if (s !== 'correct' && s !== 'revealed') {
+          delete selected[qid];
+        }
+      });
+      saveState();
+
       Object.keys(state).forEach(id => {
         if (id.startsWith('__')) return; // skip attempt counters
         const s = state[id];
@@ -1729,6 +1808,11 @@
     /* ================================================================
        INIT
     ================================================================ */
+    // Fix #1: Track when user actually types in inputs
+    document.querySelectorAll('.input-group input[type="number"]').forEach(inp => {
+      inp.addEventListener('input', () => { inp.dataset.touched = '1'; });
+    });
+
     loadState();
     restoreAll();
     lockCorrectMCs();
