@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 7: Consumers, Producers &amp; Market Efficiency</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Newsreader:ital,opsz,wght@0,6..72,300..800;1,6..72,300..800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Design tokens ─────────────────────────────────────────────── */
+    :root {
+      --bg:         #faf6ef;
+      --card:       #ffffff;
+      --card-border:#e8e3d8;
+      --text:       #2c2c35;
+      --text-muted: #6b6b78;
+      --heading:    #1a1a2e;
+      --cs:         #4a90d9;
+      --cs-light:   rgba(74,144,217,0.2);
+      --ps:         #d96c4a;
+      --ps-light:   rgba(217,108,74,0.2);
+      --dwl:        #c9a832;
+      --dwl-light:  rgba(201,168,50,0.25);
+      --eq-green:   #3a7d5c;
+      --accent:     #1e3a5f;
+      --nav-h:      56px;
+    }
+
+    /* ── Reset / base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.7;
+      padding-top: var(--nav-h);
+    }
+
+    /* ── Typography ───────────────────────────────────────────────── */
+    h1, h2, h3 {
+      font-family: 'Fraunces', Georgia, serif;
+      color: var(--heading);
+      line-height: 1.2;
+    }
+
+    code, .mono {
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 0.88em;
+    }
+
+    p { color: var(--text); }
+
+    /* ── Navigation ───────────────────────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      background: rgba(250,246,239,0.96);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--card-border);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-inner {
+      width: 100%;
+      max-width: 760px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-brand {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      display: block;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 15px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-links a:hover { background: var(--card-border); color: var(--heading); }
+
+    .nav-links a.active {
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* ── Layout wrapper ───────────────────────────────────────────── */
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ── Sections / cards ─────────────────────────────────────────── */
+    .section {
+      margin-top: 64px;
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 28px 32px;
+      box-shadow: 0 2px 12px rgba(28,28,40,0.06);
+    }
+
+    /* ── Hero ─────────────────────────────────────────────────────── */
+    .hero {
+      padding: 56px 0 20px;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+
+    .hero.visible { opacity: 1; transform: translateY(0); }
+
+    .hero-accent {
+      display: block;
+      width: 48px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--cs), var(--ps));
+      border-radius: 2px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 700;
+      font-variation-settings: 'opsz' 40;
+      color: var(--heading);
+      margin-bottom: 14px;
+    }
+
+    .hero-sub {
+      font-size: 19px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ── Section headings ─────────────────────────────────────────── */
+    .section-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .section h2 {
+      font-size: clamp(22px, 3.5vw, 28px);
+      font-weight: 700;
+      font-variation-settings: 'opsz' 28;
+      margin-bottom: 16px;
+    }
+
+    /* ── Equation box ─────────────────────────────────────────────── */
+    .eq-box {
+      background: var(--bg);
+      border: 1px solid var(--card-border);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 18px 0;
+    }
+
+    .eq-box .eq-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin: 4px 0;
+    }
+
+    .eq-box .eq-label {
+      font-family: 'Newsreader', serif;
+      color: var(--text-muted);
+      font-size: 15px;
+      min-width: 72px;
+    }
+
+    .eq-box .eq-formula {
+      font-family: 'Fira Code', monospace;
+      font-size: 15px;
+      color: var(--heading);
+      font-weight: 600;
+    }
+
+    .eq-box .eq-note {
+      font-size: 14px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ── Formula chip ─────────────────────────────────────────────── */
+    .formula-chip {
+      display: inline-block;
+      background: var(--cs-light);
+      border: 1px solid rgba(74,144,217,0.35);
+      border-radius: 8px;
+      padding: 10px 18px;
+      margin: 14px 0;
+      font-family: 'Fira Code', monospace;
+      font-size: 14px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .formula-chip.ps {
+      background: var(--ps-light);
+      border-color: rgba(217,108,74,0.35);
+      color: #a04028;
+    }
+
+    /* ── Static SVG figure wrapper ────────────────────────────────── */
+    .fig-wrap {
+      margin: 22px 0;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+    }
+
+    .fig-wrap svg { display: block; width: 100%; height: auto; }
+
+    /* ── Interactive section header ───────────────────────────────── */
+    .interactive-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--eq-green);
+      background: rgba(58,125,92,0.1);
+      border: 1px solid rgba(58,125,92,0.25);
+      border-radius: 20px;
+      padding: 3px 12px;
+      margin-bottom: 10px;
+    }
+
+    .interactive-label::before {
+      content: '';
+      display: block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--eq-green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    /* ── Explorer drag hint ───────────────────────────────────────── */
+    .drag-hint {
+      font-family: 'Newsreader', serif;
+      font-size: 15px;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    /* ── Data panel ───────────────────────────────────────────────── */
+    .explorer-wrap {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 600px) {
+      .explorer-wrap { grid-template-columns: 1fr 200px; align-items: start; }
+    }
+
+    .data-panel {
+      background: var(--bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 18px 16px;
+    }
+
+    .data-panel h4 {
+      font-family: 'Fraunces', serif;
+      font-size: 13px;
+      font-weight: 700;
+      font-variation-settings: 'opsz' 13;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .dp-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin: 7px 0;
+      gap: 8px;
+    }
+
+    .dp-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: 'Newsreader', serif;
+    }
+
+    .dp-value {
+      font-family: 'Fira Code', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--heading);
+      transition: color 0.2s;
+    }
+
+    .dp-value.cs-val { color: var(--cs); }
+    .dp-value.ps-val { color: var(--ps); }
+    .dp-value.ts-val { color: var(--eq-green); }
+    .dp-value.dwl-val { color: var(--dwl); }
+
+    .dp-divider {
+      border: none;
+      border-top: 1px solid var(--card-border);
+      margin: 10px 0;
+    }
+
+    .dp-row.total .dp-label { font-weight: 600; color: var(--text); }
+    .dp-row.total .dp-value { font-size: 15px; }
+
+    /* ── Equilibrium flash badge ──────────────────────────────────── */
+    .eq-badge {
+      text-align: center;
+      margin-top: 10px;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      color: var(--eq-green);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .eq-badge.show { opacity: 1; }
+
+    /* ── SVG interactive styles (applied via JS) ──────────────────── */
+    .price-handle {
+      cursor: ns-resize;
+      touch-action: none;
+    }
+
+    /* ── Price Floor section ──────────────────────────────────────── */
+    .floor-controls {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-bottom: 18px;
+      padding: 14px 18px;
+      background: var(--bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+    }
+
+    .toggle-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Newsreader', serif;
+      font-size: 15px;
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .toggle-wrap input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 40px;
+      height: 22px;
+      background: #ccc;
+      border-radius: 11px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .toggle-wrap input[type="checkbox"]::after {
+      content: '';
+      position: absolute;
+      width: 18px; height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      top: 2px; left: 2px;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    .toggle-wrap input[type="checkbox"]:checked { background: var(--dwl); }
+    .toggle-wrap input[type="checkbox"]:checked::after { transform: translateX(18px); }
+
+    .floor-slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Newsreader', serif;
+      font-size: 15px;
+      color: var(--text);
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .floor-slider-wrap input[type="range"] {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      appearance: none;
+      -webkit-appearance: none;
+      background: var(--card-border);
+      cursor: pointer;
+    }
+
+    .floor-slider-wrap input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--dwl);
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    .floor-slider-wrap input[type="range"]::-moz-range-thumb {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--dwl);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    .floor-price-display {
+      font-family: 'Fira Code', monospace;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--heading);
+      min-width: 46px;
+    }
+
+    .floor-panel-wrap {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 600px) {
+      .floor-panel-wrap { grid-template-columns: 1fr 200px; align-items: start; }
+    }
+
+    .floor-data-panel {
+      background: var(--bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 18px 16px;
+    }
+
+    /* ── Takeaways ────────────────────────────────────────────────── */
+    .takeaways ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .takeaways ul li {
+      display: flex;
+      gap: 14px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--card-border);
+      font-size: 17px;
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .takeaways ul li:last-child { border-bottom: none; }
+
+    .takeaways ul li::before {
+      content: attr(data-icon);
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── CTA ──────────────────────────────────────────────────────── */
+    .cta-card {
+      background: linear-gradient(135deg, var(--accent) 0%, #2a5298 100%);
+      border: none;
+      border-radius: 14px;
+      padding: 36px 32px;
+      text-align: center;
+      margin-top: 64px;
+    }
+
+    .cta-card p {
+      color: rgba(255,255,255,0.8);
+      font-size: 17px;
+      margin-bottom: 20px;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      color: var(--accent);
+      font-family: 'Fraunces', serif;
+      font-size: 18px;
+      font-weight: 700;
+      font-variation-settings: 'opsz' 18;
+      text-decoration: none;
+      padding: 13px 28px;
+      border-radius: 50px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+    }
+
+    .cta-card h2 {
+      color: #fff;
+      font-size: clamp(20px, 3vw, 26px);
+      margin-bottom: 10px;
+    }
+
+    /* ── Accessibility / focus ────────────────────────────────────── */
+    :focus-visible {
+      outline: 3px solid var(--cs);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    /* ── Responsive tweaks ────────────────────────────────────────── */
+    @media (max-width: 520px) {
+      .card { padding: 20px 18px; }
+      .page { padding: 0 16px 60px; }
+      .floor-controls { gap: 12px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ── Navigation ────────────────────────────────────────────────── -->
+<nav class="nav" role="navigation" aria-label="Chapter navigation">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">Econ 101 / Ch. 7</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active" aria-current="page">Lesson</a></li>
+      <li><a href="worksheet.html">Worksheet</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── Page wrapper ───────────────────────────────────────────────── -->
+<main class="page">
+
+  <!-- 1. Hero ────────────────────────────────────────────────────── -->
+  <header class="hero" id="hero">
+    <span class="hero-accent" aria-hidden="true"></span>
+    <h1>Chapter 7: Consumers, Producers &amp; the Efficiency of Markets</h1>
+    <p class="hero-sub">How free markets create value — and what happens when they don't</p>
+  </header>
+
+  <!-- 2. Strawberry Market intro ──────────────────────────────────── -->
+  <section class="section" id="intro" aria-labelledby="intro-h">
+    <div class="card">
+      <p class="section-label">Running Example</p>
+      <h2 id="intro-h">The Strawberry Market</h2>
+      <p>
+        To make these ideas concrete, we'll return to the same market all chapter: strawberries.
+        Buyers have a willingness to pay that falls as they get more; sellers have a cost that rises
+        as they produce more. Two straight lines capture all of that.
+      </p>
+      <div class="eq-box" role="region" aria-label="Market equations">
+        <div class="eq-row">
+          <span class="eq-label">Demand:</span>
+          <span class="eq-formula">P = 30 &minus; 2Q</span>
+          <span class="eq-note">what buyers will pay</span>
+        </div>
+        <div class="eq-row">
+          <span class="eq-label">Supply:</span>
+          <span class="eq-formula">P = 10 + 2Q</span>
+          <span class="eq-note">what sellers need</span>
+        </div>
+        <div class="eq-row" style="margin-top:10px; padding-top:10px; border-top:1px solid var(--card-border);">
+          <span class="eq-label">Equilibrium:</span>
+          <span class="eq-formula">Q* = 5,&nbsp;&nbsp;P* = $20</span>
+          <span class="eq-note">where both lines cross</span>
+        </div>
+      </div>
+      <p>
+        Setting demand equal to supply gives us the equilibrium: 5 pints at $20 each.
+        Everything else in Chapter 7 follows from understanding what happens around that crossing point.
+      </p>
+    </div>
+  </section>
+
+  <!-- 3. Consumer Surplus ─────────────────────────────────────────── -->
+  <section class="section" id="cs-section" aria-labelledby="cs-h">
+    <div class="card">
+      <p class="section-label">Section 1</p>
+      <h2 id="cs-h">What Buyers Gain: Consumer Surplus</h2>
+      <p>
+        Suppose you'd pay up to $28 for a pint of strawberries, but the market price is $20.
+        You "saved" $8 — that saving is your <strong>consumer surplus</strong>.
+        Across all buyers, CS is the total area between the demand curve and the market price.
+      </p>
+      <p style="margin-top:10px;">
+        Because demand is a straight line, that area is always a triangle. At equilibrium the
+        base runs from Q=0 to Q=5, and the height is $30 &minus; $20 = $10, giving CS = &frac12; &times; 5 &times; 10 = <strong>$25</strong>.
+      </p>
+
+      <!-- Static CS figure -->
+      <div class="fig-wrap" role="img" aria-label="Supply and demand graph showing consumer surplus as a blue triangle above the price line and below the demand curve">
+        <svg viewBox="0 0 340 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Grid lines -->
+          <line x1="55" y1="50"  x2="310" y2="50"  stroke="#f0ece3" stroke-width="1"/>
+          <line x1="55" y1="90"  x2="310" y2="90"  stroke="#f0ece3" stroke-width="1"/>
+          <line x1="55" y1="130" x2="310" y2="130" stroke="#f0ece3" stroke-width="1"/>
+          <line x1="55" y1="170" x2="310" y2="170" stroke="#f0ece3" stroke-width="1"/>
+          <line x1="130" y1="30" x2="130" y2="210" stroke="#f0ece3" stroke-width="1"/>
+          <line x1="205" y1="30" x2="205" y2="210" stroke="#f0ece3" stroke-width="1"/>
+          <line x1="280" y1="30" x2="280" y2="210" stroke="#f0ece3" stroke-width="1"/>
+
+          <!-- CS triangle: vertices at (Q=0,P=30)→(Q=5,P=20)→(Q=0,P=20) -->
+          <!-- Q=0 → x=55, Q=5 → x=130. P=30 → y=50, P=20 → y=130 -->
+          <polygon points="55,50 130,130 55,130" fill="rgba(74,144,217,0.25)" stroke="rgba(74,144,217,0.5)" stroke-width="1"/>
+
+          <!-- Price line at P=20 -->
+          <line x1="55" y1="130" x2="310" y2="130" stroke="#888" stroke-width="1.5" stroke-dasharray="5,4"/>
+
+          <!-- Demand line: (Q=0,P=30)→(Q=12.5,P=5) → x range 55 to 305, y range 50 to 210 -->
+          <line x1="55" y1="50" x2="305" y2="210" stroke="var(--cs)" stroke-width="2.5"/>
+
+          <!-- Supply line: (Q=0,P=10)→(Q=12.5,P=35) → P=10→y=170, P=35→y=50 (but beyond x axis) -->
+          <line x1="55" y1="170" x2="305" y2="50" stroke="var(--ps)" stroke-width="2.5" stroke-dasharray="6,3"/>
+
+          <!-- Axes -->
+          <line x1="55" y1="210" x2="310" y2="210" stroke="#555" stroke-width="2"/>
+          <line x1="55" y1="30"  x2="55"  y2="210" stroke="#555" stroke-width="2"/>
+
+          <!-- Equilibrium dot -->
+          <circle cx="130" cy="130" r="5" fill="var(--eq-green)" stroke="#fff" stroke-width="2"/>
+
+          <!-- CS label -->
+          <text x="78" y="105" font-family="Fraunces,serif" font-size="14" font-weight="700" fill="var(--cs)">CS</text>
+
+          <!-- Axis labels -->
+          <text x="55"  y="225" font-family="Newsreader,serif" font-size="11" fill="#888" text-anchor="middle">0</text>
+          <text x="130" y="225" font-family="Newsreader,serif" font-size="11" fill="#888" text-anchor="middle">5</text>
+          <text x="205" y="225" font-family="Newsreader,serif" font-size="11" fill="#888" text-anchor="middle">10</text>
+          <text x="280" y="225" font-family="Newsreader,serif" font-size="11" fill="#888" text-anchor="middle">15</text>
+          <text x="178" y="238" font-family="Newsreader,serif" font-size="12" fill="#888" text-anchor="middle">Quantity (pints)</text>
+
+          <text x="48" y="50"  font-family="Fira Code,monospace" font-size="10" fill="#888" text-anchor="end">30</text>
+          <text x="48" y="90"  font-family="Fira Code,monospace" font-size="10" fill="#888" text-anchor="end">25</text>
+          <text x="48" y="130" font-family="Fira Code,monospace" font-size="10" fill="#888" text-anchor="end">20</text>
+          <text x="48" y="170" font-family="Fira Code,monospace" font-size="10" fill="#888" text-anchor="end">10</text>
+          <text x="34" y="125" font-family="Newsreader,serif" font-size="12" fill="#888" text-anchor="middle" transform="rotate(-90,34,125)">Price ($)</text>
+
+          <!-- Line labels -->
+          <text x="298" y="205" font-family="Newsreader,serif" font-size="12" fill="var(--cs)" text-anchor="end">Demand</text>
+          <text x="298" y="57"  font-family="Newsreader,serif" font-size="12" fill="var(--ps)" text-anchor="end">Supply</text>
+          <text x="312" y="133" font-family="Newsreader,serif" font-size="11" fill="#888">P*=$20</text>
+        </svg>
+      </div>
+
+      <div class="formula-chip" role="note" aria-label="Consumer surplus formula">
+        CS = area above price, below demand curve = &frac12; &times; Q* &times; (P<sub>max</sub> &minus; P*)
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Producer Surplus ─────────────────────────────────────────── -->
+  <section class="section" id="ps-section" aria-labelledby="ps-h">
+    <div class="card">
+      <p class="section-label">Section 2</p>
+      <h2 id="ps-h">What Sellers Gain: Producer Surplus</h2>
+      <p>
+        Sellers also gain. A farmer whose cost to grow a pint is $12 earns $8 in profit when
+        the market price is $20. <strong>Producer surplus</strong> is the total area between
+        the market price and the supply curve — the extra revenue sellers receive above the
+        minimum they'd accept.
+      </p>
+      <p style="margin-top:10px;">
+        At equilibrium the PS triangle has base Q=5 and height $20 &minus; $10 = $10,
+        so PS = &frac12; &times; 5 &times; 10 = <strong>$25</strong>. Total surplus = CS + PS = <strong>$50</strong>.
+      </p>
+
+      <!-- Static PS figure -->
+      <div class="fig-wrap" role="img" aria-label="Supply and demand graph showing producer surplus as a coral triangle below the price line and above the supply curve">
+        <svg viewBox="0 0 340 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Grid -->
+          <line x1="55" y1="50"  x2="310" y2="50"  stroke="#f0ece3" stroke-width="1"/>
+          <line x1="55" y1="90"  x2="310" y2="90"  stroke="#f0ece3" stroke-width="1"/>
+          <line x1="55" y1="130" x2="310" y2="130" stroke="#f0ece3" stroke-width="1"/>
+          <line x1="55" y1="170" x2="310" y2="170" stroke="#f0ece3" stroke-width="1"/>
+          <line x1="130" y1="30" x2="130" y2="210" stroke="#f0ece3" stroke-width="1"/>
+          <line x1="205" y1="30" x2="205" y2="210" stroke="#f0ece3" stroke-width="1"/>
+          <line x1="280" y1="30" x2="280" y2="210" stroke="#f0ece3" stroke-width="1"/>
+
+          <!-- PS triangle: (Q=0,P=10)→(Q=5,P=20)→(Q=0,P=20) -->
+          <!-- P=10→y=170, P=20→y=130 -->
+          <polygon points="55,130 130,130 55,170" fill="rgba(217,108,74,0.25)" stroke="rgba(217,108,74,0.5)" stroke-width="1"/>
+
+          <!-- Price line -->
+          <line x1="55" y1="130" x2="310" y2="130" stroke="#888" stroke-width="1.5" stroke-dasharray="5,4"/>
+
+          <!-- Demand (dashed) -->
+          <line x1="55" y1="50" x2="305" y2="210" stroke="var(--cs)" stroke-width="2.5" stroke-dasharray="6,3"/>
+          <!-- Supply (solid) -->
+          <line x1="55" y1="170" x2="305" y2="50" stroke="var(--ps)" stroke-width="2.5"/>
+
+          <!-- Axes -->
+          <line x1="55" y1="210" x2="310" y2="210" stroke="#555" stroke-width="2"/>
+          <line x1="55" y1="30"  x2="55"  y2="210" stroke="#555" stroke-width="2"/>
+
+          <!-- Equilibrium dot -->
+          <circle cx="130" cy="130" r="5" fill="var(--eq-green)" stroke="#fff" stroke-width="2"/>
+
+          <!-- PS label -->
+          <text x="75" y="158" font-family="Fraunces,serif" font-size="14" font-weight="700" fill="var(--ps)">PS</text>
+
+          <!-- Axis labels -->
+          <text x="55"  y="225" font-family="Newsreader,serif" font-size="11" fill="#888" text-anchor="middle">0</text>
+          <text x="130" y="225" font-family="Newsreader,serif" font-size="11" fill="#888" text-anchor="middle">5</text>
+          <text x="205" y="225" font-family="Newsreader,serif" font-size="11" fill="#888" text-anchor="middle">10</text>
+          <text x="280" y="225" font-family="Newsreader,serif" font-size="11" fill="#888" text-anchor="middle">15</text>
+          <text x="178" y="238" font-family="Newsreader,serif" font-size="12" fill="#888" text-anchor="middle">Quantity (pints)</text>
+
+          <text x="48" y="50"  font-family="Fira Code,monospace" font-size="10" fill="#888" text-anchor="end">30</text>
+          <text x="48" y="90"  font-family="Fira Code,monospace" font-size="10" fill="#888" text-anchor="end">25</text>
+          <text x="48" y="130" font-family="Fira Code,monospace" font-size="10" fill="#888" text-anchor="end">20</text>
+          <text x="48" y="170" font-family="Fira Code,monospace" font-size="10" fill="#888" text-anchor="end">10</text>
+          <text x="34" y="125" font-family="Newsreader,serif" font-size="12" fill="#888" text-anchor="middle" transform="rotate(-90,34,125)">Price ($)</text>
+
+          <text x="298" y="205" font-family="Newsreader,serif" font-size="12" fill="var(--cs)" text-anchor="end">Demand</text>
+          <text x="298" y="57"  font-family="Newsreader,serif" font-size="12" fill="var(--ps)" text-anchor="end">Supply</text>
+          <text x="312" y="133" font-family="Newsreader,serif" font-size="11" fill="#888">P*=$20</text>
+        </svg>
+      </div>
+
+      <div class="formula-chip ps" role="note" aria-label="Producer surplus formula">
+        PS = area below price, above supply curve = &frac12; &times; Q* &times; (P* &minus; P<sub>min</sub>)
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Surplus Explorer — MAIN INTERACTIVE ──────────────────────── -->
+  <section class="section" id="explorer-section" aria-labelledby="explorer-h">
+    <div class="card">
+      <span class="interactive-label" aria-hidden="true">Interactive</span>
+      <p class="section-label">Section 3</p>
+      <h2 id="explorer-h">The Surplus Explorer</h2>
+      <p>
+        Drag the price line up or down to see how surplus redistributes between buyers and sellers,
+        and where deadweight loss appears. Notice that total surplus is maximized at exactly $20.
+      </p>
+      <p class="drag-hint" aria-live="polite" id="drag-hint">
+        Drag the price line up or down to see how surplus changes.
+      </p>
+
+      <div class="explorer-wrap">
+        <!-- Main SVG -->
+        <div>
+          <svg id="explorer-svg"
+               viewBox="0 0 520 400"
+               role="img"
+               aria-label="Interactive supply and demand graph. Drag the price line to change the price."
+               style="display:block; width:100%; height:auto; cursor:default; user-select:none; touch-action:none;">
+
+            <!-- Defs: clip path for plot area -->
+            <defs>
+              <clipPath id="plot-clip">
+                <rect x="70" y="30" width="420" height="330"/>
+              </clipPath>
+            </defs>
+
+            <!-- Background -->
+            <rect x="70" y="30" width="420" height="330" fill="#fff" rx="6"/>
+
+            <!-- Grid lines (horizontal, price every 5) -->
+            <!-- P=5→y=330  P=10→y=294  P=15→y=258  P=20→y=222  P=25→y=186  P=30→y=150  P=35→y=114 -->
+            <g id="grid-h" stroke="#f0ece3" stroke-width="1">
+              <line x1="70" y1="330" x2="490" y2="330"/>
+              <line x1="70" y1="294" x2="490" y2="294"/>
+              <line x1="70" y1="258" x2="490" y2="258"/>
+              <line x1="70" y1="222" x2="490" y2="222"/>
+              <line x1="70" y1="186" x2="490" y2="186"/>
+              <line x1="70" y1="150" x2="490" y2="150"/>
+              <line x1="70" y1="114" x2="490" y2="114"/>
+              <line x1="70" y1="78"  x2="490" y2="78"/>
+              <line x1="70" y1="42"  x2="490" y2="42"/>
+            </g>
+
+            <!-- Grid lines (vertical, Q every 5) -->
+            <!-- Q=0→x=70  Q=5→x=210  Q=10→x=350  Q=15→x=490 -->
+            <g id="grid-v" stroke="#f0ece3" stroke-width="1">
+              <line x1="210" y1="30" x2="210" y2="360"/>
+              <line x1="350" y1="30" x2="350" y2="360"/>
+              <line x1="490" y1="30" x2="490" y2="360"/>
+            </g>
+
+            <!-- CS polygon (clipped) -->
+            <polygon id="cs-poly" clip-path="url(#plot-clip)"
+                     fill="rgba(74,144,217,0.3)" stroke="none"/>
+
+            <!-- PS polygon (clipped) -->
+            <polygon id="ps-poly" clip-path="url(#plot-clip)"
+                     fill="rgba(217,108,74,0.3)" stroke="none"/>
+
+            <!-- DWL polygon (clipped) -->
+            <polygon id="dwl-poly" clip-path="url(#plot-clip)"
+                     fill="rgba(201,168,50,0.4)" stroke="none"/>
+
+            <!-- Demand line: P=30-2Q → Q=0→P=30, Q=15→P=0 -->
+            <!-- x: 70+Q*28, y: 360-P*7.2 (scale: 420px/15Q, 330px/35P... let's compute precisely) -->
+            <!-- Plot: left=70 right=490 (420px wide for Q 0-15 → 28px/unit)
+                       top=30 bottom=360 (330px tall for P 0-35 → actually 0-35 range...
+                       We want P=0 at y=360, P=35 at y=30. So 330px/35 = ~9.43px/unit
+                       But let's use: y = 360 - P * (330/35)
+                       and: x = 70 + Q * (420/15) = 70 + Q * 28
+            -->
+            <!-- Demand at Q=0: P=30 → y=360-30*(330/35)=360-282.86=77.14 → y≈77
+                 Demand at Q=15: P=0 → y=360 -->
+            <line id="demand-line" x1="70" y1="77" x2="490" y2="360"
+                  stroke="var(--cs)" stroke-width="2.5" stroke-linecap="round"/>
+
+            <!-- Supply line: P=10+2Q → Q=0:P=10 y=266, Q=12.5:P=35 y=30 → Q=12.5:x=70+12.5*28=420 -->
+            <line id="supply-line" x1="70" y1="266" x2="420" y2="30"
+                  stroke="var(--ps)" stroke-width="2.5" stroke-linecap="round"/>
+
+            <!-- Equilibrium dot -->
+            <circle id="eq-dot" cx="210" cy="172" r="7"
+                    fill="var(--eq-green)" stroke="#fff" stroke-width="2.5"
+                    aria-label="Equilibrium: Q=5, P=$20"/>
+
+            <!-- Price line (dashed, draggable) -->
+            <line id="price-line" x1="70" y1="172" x2="490" y2="172"
+                  stroke="#444" stroke-width="2" stroke-dasharray="8,5" opacity="0.85"/>
+
+            <!-- Price line drag handle -->
+            <g id="price-handle" class="price-handle"
+               role="slider" aria-label="Price level" aria-valuemin="10" aria-valuemax="30"
+               aria-valuenow="20" tabindex="0">
+              <circle cx="70" cy="172" r="12"
+                      fill="var(--accent)" stroke="#fff" stroke-width="2.5"
+                      opacity="0.95"/>
+              <!-- Grip lines -->
+              <line x1="63" y1="169" x2="77" y2="169" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="63" y1="172" x2="77" y2="172" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="63" y1="175" x2="77" y2="175" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+            </g>
+
+            <!-- Axes (drawn on top so they cover clipped polygons) -->
+            <line x1="70" y1="360" x2="490" y2="360" stroke="#444" stroke-width="2"/>
+            <line x1="70" y1="30"  x2="70"  y2="360" stroke="#444" stroke-width="2"/>
+
+            <!-- Y-axis ticks & labels -->
+            <g font-family="Fira Code, monospace" font-size="11" fill="#6b6b78" text-anchor="end">
+              <line x1="67" y1="360" x2="70" y2="360" stroke="#444" stroke-width="1.5"/>
+              <text x="63" y="364">0</text>
+              <line x1="67" y1="266" x2="70" y2="266" stroke="#444" stroke-width="1.5"/>
+              <text x="63" y="270">10</text>
+              <line x1="67" y1="172" x2="70" y2="172" stroke="#444" stroke-width="1.5"/>
+              <text x="63" y="176">20</text>
+              <line x1="67" y1="77"  x2="70" y2="77"  stroke="#444" stroke-width="1.5"/>
+              <text x="63" y="81">30</text>
+              <line x1="67" y1="30"  x2="70" y2="30"  stroke="#444" stroke-width="1.5"/>
+              <text x="63" y="34">35</text>
+            </g>
+
+            <!-- X-axis ticks & labels -->
+            <g font-family="Fira Code, monospace" font-size="11" fill="#6b6b78" text-anchor="middle">
+              <line x1="70"  y1="360" x2="70"  y2="363" stroke="#444" stroke-width="1.5"/>
+              <text x="70"  y="375">0</text>
+              <line x1="210" y1="360" x2="210" y2="363" stroke="#444" stroke-width="1.5"/>
+              <text x="210" y="375">5</text>
+              <line x1="350" y1="360" x2="350" y2="363" stroke="#444" stroke-width="1.5"/>
+              <text x="350" y="375">10</text>
+              <line x1="490" y1="360" x2="490" y2="363" stroke="#444" stroke-width="1.5"/>
+              <text x="490" y="375">15</text>
+            </g>
+
+            <!-- Axis titles -->
+            <text x="280" y="396" font-family="Newsreader, serif" font-size="13" fill="#6b6b78" text-anchor="middle">Quantity (pints)</text>
+            <text x="22" y="200" font-family="Newsreader, serif" font-size="13" fill="#6b6b78" text-anchor="middle" transform="rotate(-90,22,200)">Price ($)</text>
+
+            <!-- Line labels -->
+            <text x="484" y="356" font-family="Newsreader,serif" font-size="13" fill="var(--cs)" text-anchor="end">Demand</text>
+            <text x="416" y="26"  font-family="Newsreader,serif" font-size="13" fill="var(--ps)" text-anchor="end">Supply</text>
+
+            <!-- Price label (dynamic, positioned right of handle) -->
+            <text id="price-label" x="88" y="168"
+                  font-family="Fira Code, monospace" font-size="12" font-weight="600"
+                  fill="var(--accent)">P = $20.00</text>
+
+          </svg>
+        </div>
+
+        <!-- Data panel -->
+        <div class="data-panel" role="region" aria-label="Surplus values" aria-live="polite">
+          <h4>Surplus Values</h4>
+
+          <div class="dp-row">
+            <span class="dp-label">Price</span>
+            <span class="dp-value" id="dp-price">$20.00</span>
+          </div>
+
+          <hr class="dp-divider"/>
+
+          <div class="dp-row">
+            <span class="dp-label" style="color:var(--cs)">Consumer</span>
+            <span class="dp-value cs-val" id="dp-cs">$25.00</span>
+          </div>
+          <div class="dp-row">
+            <span class="dp-label" style="color:var(--ps)">Producer</span>
+            <span class="dp-value ps-val" id="dp-ps">$25.00</span>
+          </div>
+
+          <hr class="dp-divider"/>
+
+          <div class="dp-row total">
+            <span class="dp-label" style="color:var(--eq-green)">Total</span>
+            <span class="dp-value ts-val" id="dp-ts">$50.00</span>
+          </div>
+
+          <hr class="dp-divider"/>
+
+          <div class="dp-row">
+            <span class="dp-label" style="color:var(--dwl)">DWL</span>
+            <span class="dp-value dwl-val" id="dp-dwl">$0.00</span>
+          </div>
+
+          <p class="eq-badge" id="eq-badge">Equilibrium!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Price Floors ─────────────────────────────────────────────── -->
+  <section class="section" id="floor-section" aria-labelledby="floor-h">
+    <div class="card">
+      <span class="interactive-label" aria-hidden="true">Interactive</span>
+      <p class="section-label">Section 4</p>
+      <h2 id="floor-h">When Government Steps In: Price Floors</h2>
+      <p>
+        Governments sometimes set a <strong>price floor</strong> — a minimum legal price —
+        to protect sellers. The classic example is agricultural price supports. The intention
+        is good: keep farmers in business. But a binding floor (set above equilibrium) creates
+        a gap between quantity supplied and quantity demanded. That gap is excess supply,
+        and the lost trades become deadweight loss.
+      </p>
+
+      <!-- Controls -->
+      <div class="floor-controls">
+        <label class="toggle-wrap">
+          <input type="checkbox" id="floor-toggle" aria-label="Enable price floor"/>
+          Price Floor
+        </label>
+
+        <div class="floor-slider-wrap" id="floor-slider-wrap" style="display:none;">
+          <label for="floor-slider" style="font-size:14px; color:var(--text-muted); white-space:nowrap;">Floor:</label>
+          <input type="range" id="floor-slider"
+                 min="20" max="29" step="0.5" value="24"
+                 aria-label="Price floor level"/>
+          <span class="floor-price-display" id="floor-price-display">$24.00</span>
+        </div>
+      </div>
+
+      <div class="floor-panel-wrap">
+        <!-- Floor SVG -->
+        <div>
+          <svg id="floor-svg"
+               viewBox="0 0 520 400"
+               role="img"
+               aria-label="Supply and demand graph with price floor"
+               style="display:block; width:100%; height:auto;">
+
+            <defs>
+              <clipPath id="floor-clip">
+                <rect x="70" y="30" width="420" height="330"/>
+              </clipPath>
+            </defs>
+
+            <rect x="70" y="30" width="420" height="330" fill="#fff" rx="6"/>
+
+            <!-- Grid -->
+            <g stroke="#f0ece3" stroke-width="1">
+              <line x1="70" y1="330" x2="490" y2="330"/>
+              <line x1="70" y1="294" x2="490" y2="294"/>
+              <line x1="70" y1="258" x2="490" y2="258"/>
+              <line x1="70" y1="222" x2="490" y2="222"/>
+              <line x1="70" y1="186" x2="490" y2="186"/>
+              <line x1="70" y1="150" x2="490" y2="150"/>
+              <line x1="70" y1="114" x2="490" y2="114"/>
+              <line x1="70" y1="78"  x2="490" y2="78"/>
+              <line x1="70" y1="42"  x2="490" y2="42"/>
+              <line x1="210" y1="30" x2="210" y2="360"/>
+              <line x1="350" y1="30" x2="350" y2="360"/>
+              <line x1="490" y1="30" x2="490" y2="360"/>
+            </g>
+
+            <!-- Shaded areas -->
+            <polygon id="floor-cs-poly" clip-path="url(#floor-clip)" fill="rgba(74,144,217,0.3)" stroke="none"/>
+            <polygon id="floor-ps-poly" clip-path="url(#floor-clip)" fill="rgba(217,108,74,0.3)" stroke="none"/>
+            <polygon id="floor-dwl-poly" clip-path="url(#floor-clip)" fill="rgba(201,168,50,0.4)" stroke="none"/>
+
+            <!-- Excess supply bracket -->
+            <g id="floor-excess-group" display="none">
+              <!-- Dashed drop-lines for Qd and Qs -->
+              <line id="floor-qd-line" x1="0" y1="30" x2="0" y2="360" stroke="#888" stroke-width="1" stroke-dasharray="4,3"/>
+              <line id="floor-qs-line" x1="0" y1="30" x2="0" y2="360" stroke="#888" stroke-width="1" stroke-dasharray="4,3"/>
+              <!-- Bracket line -->
+              <line id="floor-bracket" x1="0" y1="0" x2="0" y2="0" stroke="var(--dwl)" stroke-width="2"/>
+              <!-- Label -->
+              <text id="floor-excess-label" x="0" y="0"
+                    font-family="Newsreader,serif" font-size="11" fill="var(--dwl)"
+                    text-anchor="middle">Excess Supply</text>
+            </g>
+
+            <!-- Demand line -->
+            <line x1="70" y1="77" x2="490" y2="360" stroke="var(--cs)" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Supply line -->
+            <line x1="70" y1="266" x2="420" y2="30" stroke="var(--ps)" stroke-width="2.5" stroke-linecap="round"/>
+
+            <!-- Equilibrium (free market) -->
+            <circle id="floor-eq-dot" cx="210" cy="172" r="6"
+                    fill="var(--eq-green)" stroke="#fff" stroke-width="2.5"/>
+
+            <!-- Floor line -->
+            <line id="floor-line" x1="70" y1="172" x2="490" y2="172"
+                  stroke="var(--dwl)" stroke-width="3" display="none" stroke-linecap="round"/>
+
+            <!-- Axes -->
+            <line x1="70" y1="360" x2="490" y2="360" stroke="#444" stroke-width="2"/>
+            <line x1="70" y1="30"  x2="70"  y2="360" stroke="#444" stroke-width="2"/>
+
+            <!-- Y-axis labels -->
+            <g font-family="Fira Code,monospace" font-size="11" fill="#6b6b78" text-anchor="end">
+              <text x="63" y="364">0</text>
+              <text x="63" y="270">10</text>
+              <text x="63" y="176">20</text>
+              <text x="63" y="81">30</text>
+              <text x="63" y="34">35</text>
+              <line x1="67" y1="360" x2="70" y2="360" stroke="#444" stroke-width="1.5"/>
+              <line x1="67" y1="266" x2="70" y2="266" stroke="#444" stroke-width="1.5"/>
+              <line x1="67" y1="172" x2="70" y2="172" stroke="#444" stroke-width="1.5"/>
+              <line x1="67" y1="77"  x2="70" y2="77"  stroke="#444" stroke-width="1.5"/>
+              <line x1="67" y1="30"  x2="70" y2="30"  stroke="#444" stroke-width="1.5"/>
+            </g>
+
+            <!-- X-axis labels -->
+            <g font-family="Fira Code,monospace" font-size="11" fill="#6b6b78" text-anchor="middle">
+              <text x="70"  y="375">0</text>
+              <text x="210" y="375">5</text>
+              <text x="350" y="375">10</text>
+              <text x="490" y="375">15</text>
+              <line x1="70"  y1="360" x2="70"  y2="363" stroke="#444" stroke-width="1.5"/>
+              <line x1="210" y1="360" x2="210" y2="363" stroke="#444" stroke-width="1.5"/>
+              <line x1="350" y1="360" x2="350" y2="363" stroke="#444" stroke-width="1.5"/>
+              <line x1="490" y1="360" x2="490" y2="363" stroke="#444" stroke-width="1.5"/>
+            </g>
+
+            <!-- Q-labels for Qd and Qs (dynamic) -->
+            <text id="floor-qd-label" x="0" y="382"
+                  font-family="Fira Code,monospace" font-size="11" fill="var(--cs)"
+                  text-anchor="middle" display="none">Qd</text>
+            <text id="floor-qs-label" x="0" y="382"
+                  font-family="Fira Code,monospace" font-size="11" fill="var(--ps)"
+                  text-anchor="middle" display="none">Qs</text>
+
+            <text x="280" y="396" font-family="Newsreader,serif" font-size="13" fill="#6b6b78" text-anchor="middle">Quantity (pints)</text>
+            <text x="22" y="200" font-family="Newsreader,serif" font-size="13" fill="#6b6b78" text-anchor="middle" transform="rotate(-90,22,200)">Price ($)</text>
+
+            <text x="484" y="356" font-family="Newsreader,serif" font-size="13" fill="var(--cs)" text-anchor="end">Demand</text>
+            <text x="416" y="26"  font-family="Newsreader,serif" font-size="13" fill="var(--ps)" text-anchor="end">Supply</text>
+
+            <!-- Floor label (dynamic) -->
+            <text id="floor-label-text" x="490" y="0"
+                  font-family="Fira Code,monospace" font-size="11" font-weight="600"
+                  fill="var(--dwl)" text-anchor="end" display="none">Floor</text>
+
+          </svg>
+        </div>
+
+        <!-- Floor data panel -->
+        <div class="floor-data-panel" role="region" aria-label="Price floor surplus values" aria-live="polite">
+          <h4>Market Data</h4>
+
+          <div class="dp-row">
+            <span class="dp-label">Floor Price</span>
+            <span class="dp-value" id="fdp-price">$20.00 (free)</span>
+          </div>
+          <div class="dp-row">
+            <span class="dp-label">Q Demanded</span>
+            <span class="dp-value" id="fdp-qd">5.00</span>
+          </div>
+          <div class="dp-row">
+            <span class="dp-label">Q Supplied</span>
+            <span class="dp-value" id="fdp-qs">5.00</span>
+          </div>
+          <div class="dp-row">
+            <span class="dp-label" style="color:var(--dwl)">Excess Supply</span>
+            <span class="dp-value dwl-val" id="fdp-excess">0.00</span>
+          </div>
+
+          <hr class="dp-divider"/>
+
+          <div class="dp-row">
+            <span class="dp-label" style="color:var(--cs)">Consumer</span>
+            <span class="dp-value cs-val" id="fdp-cs">$25.00</span>
+          </div>
+          <div class="dp-row">
+            <span class="dp-label" style="color:var(--ps)">Producer</span>
+            <span class="dp-value ps-val" id="fdp-ps">$25.00</span>
+          </div>
+          <div class="dp-row total">
+            <span class="dp-label" style="color:var(--eq-green)">Total</span>
+            <span class="dp-value ts-val" id="fdp-ts">$50.00</span>
+          </div>
+
+          <hr class="dp-divider"/>
+
+          <div class="dp-row">
+            <span class="dp-label" style="color:var(--dwl)">DWL</span>
+            <span class="dp-value dwl-val" id="fdp-dwl">$0.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Key Takeaways ────────────────────────────────────────────── -->
+  <section class="section takeaways" id="takeaways" aria-labelledby="takeaways-h">
+    <div class="card">
+      <p class="section-label">Summary</p>
+      <h2 id="takeaways-h">Key Takeaways</h2>
+      <ul aria-label="Chapter 7 key takeaways">
+        <li data-icon="&#128640;">
+          <strong>Consumer surplus (CS)</strong> measures buyer benefit —
+          the gap between willingness to pay and the actual price.
+        </li>
+        <li data-icon="&#128178;">
+          <strong>Producer surplus (PS)</strong> measures seller benefit —
+          revenue above the minimum sellers would accept.
+        </li>
+        <li data-icon="&#9878;">
+          <strong>Free markets maximize total surplus</strong> (CS + PS = $50 in our model).
+          Any price different from equilibrium shrinks the total pie.
+        </li>
+        <li data-icon="&#9651;">
+          <strong>Deadweight loss</strong> is the surplus that no one gets when mutually
+          beneficial trades don't happen — pure economic waste.
+        </li>
+        <li data-icon="&#9878;">
+          <strong>Price floors above equilibrium</strong> cause excess supply,
+          reduce CS, and create DWL even if they raise PS for some sellers.
+        </li>
+        <li data-icon="&#9878;">
+          <strong>Efficiency is not equality.</strong> A market can be perfectly efficient
+          and still distribute income very unequally — that's a separate question.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 8. CTA ──────────────────────────────────────────────────────── -->
+  <div class="cta-card section" id="cta">
+    <h2>Ready to test yourself?</h2>
+    <p>Work through problems on consumer surplus, producer surplus, and deadweight loss.</p>
+    <a href="worksheet.html" class="cta-btn">
+      Go to the Worksheet &rarr;
+    </a>
+  </div>
+
+</main>
+
+<!-- ─────────────────────────────────────────────────────────────────
+     JavaScript
+────────────────────────────────────────────────────────────────── -->
+<script>
+(function () {
+  'use strict';
+
+  /* ── Coordinate system ──────────────────────────────────────────
+     Plot area: left=70, right=490, top=30, bottom=360
+     Q range: 0-15, plot width = 420 → 28 px/unit
+     P range: 0-35, plot height = 330 → 330/35 = 9.4286 px/unit
+     Convenience: y=360 at P=0, x=70 at Q=0
+  ──────────────────────────────────────────────────────────────── */
+  var PX_PER_Q = 420 / 15;   // 28
+  var PX_PER_P = 330 / 35;   // ~9.43
+  var PLOT_LEFT   = 70;
+  var PLOT_BOTTOM = 360;
+
+  function qToX(q) { return PLOT_LEFT + q * PX_PER_Q; }
+  function pToY(p) { return PLOT_BOTTOM - p * PX_PER_P; }
+  function yToP(y) { return (PLOT_BOTTOM - y) / PX_PER_P; }
+
+  /* ── Market math ────────────────────────────────────────────────
+     Demand:  P_d = 30 - 2Q  →  Q_d = (30-P)/2
+     Supply:  P_s = 10 + 2Q  →  Q_s = (P-10)/2
+     Eq: Q*=5, P*=20
+  ──────────────────────────────────────────────────────────────── */
+  function calcSurplus(price) {
+    var P = Math.max(10.5, Math.min(29.5, price));
+    var Qt, CS, PS, TS, DWL;
+    var P_d_at_Qt, P_s_at_Qt;
+
+    if (P >= 20) {
+      // Above equilibrium: buyers constrain trade
+      Qt = (30 - P) / 2;
+      CS = (30 - P) * (30 - P) / 4;
+      PS = (30 - P) * (3 * P - 50) / 4;
+    } else {
+      // Below equilibrium: sellers constrain trade
+      Qt = (P - 10) / 2;
+      CS = (P - 10) * (70 - 3 * P) / 4;
+      PS = (P - 10) * (P - 10) / 4;
+    }
+
+    TS  = (30 - P) * (P - 10) / 2;
+    DWL = Math.max(0, 50 - TS);
+
+    P_d_at_Qt = 30 - 2 * Qt;
+    P_s_at_Qt = 10 + 2 * Qt;
+
+    return { P: P, Qt: Qt, CS: CS, PS: PS, TS: TS, DWL: DWL,
+             P_d: P_d_at_Qt, P_s: P_s_at_Qt };
+  }
+
+  function polyPoints(arr) {
+    return arr.map(function (pt) { return qToX(pt[0]) + ',' + pToY(pt[1]); }).join(' ');
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     EXPLORER INTERACTIVE
+  ──────────────────────────────────────────────────────────────── */
+  var explorerSvg    = document.getElementById('explorer-svg');
+  var priceLine      = document.getElementById('price-line');
+  var priceHandle    = document.getElementById('price-handle');
+  var priceLabel     = document.getElementById('price-label');
+  var csPoly         = document.getElementById('cs-poly');
+  var psPoly         = document.getElementById('ps-poly');
+  var dwlPoly        = document.getElementById('dwl-poly');
+  var eqDot          = document.getElementById('eq-dot');
+  var eqBadge        = document.getElementById('eq-badge');
+  var dpPrice        = document.getElementById('dp-price');
+  var dpCS           = document.getElementById('dp-cs');
+  var dpPS           = document.getElementById('dp-ps');
+  var dpTS           = document.getElementById('dp-ts');
+  var dpDWL          = document.getElementById('dp-dwl');
+
+  var currentPrice   = 20;
+  var isDragging     = false;
+  var eqFlashTimer   = null;
+  var snapped        = false;
+
+  function fmt(n) { return '$' + n.toFixed(2); }
+
+  function updateExplorer(price) {
+    var s = calcSurplus(price);
+    var snap = Math.abs(s.P - 20) < 0.5;
+    if (snap) { s.P = 20; s.CS = 25; s.PS = 25; s.TS = 50; s.DWL = 0; s.Qt = 5; s.P_d = 20; s.P_s = 20; }
+
+    currentPrice = s.P;
+    var py = pToY(s.P);
+    var hx = qToX(0); // handle always at left edge
+
+    // Move price line
+    priceLine.setAttribute('y1', py);
+    priceLine.setAttribute('y2', py);
+
+    // Move handle circle
+    var circle = priceHandle.querySelector('circle');
+    var lines  = priceHandle.querySelectorAll('line');
+    circle.setAttribute('cy', py);
+    lines[0].setAttribute('y1', py - 3); lines[0].setAttribute('y2', py - 3);
+    lines[1].setAttribute('y1', py);     lines[1].setAttribute('y2', py);
+    lines[2].setAttribute('y1', py + 3); lines[2].setAttribute('y2', py + 3);
+    priceHandle.setAttribute('aria-valuenow', s.P.toFixed(1));
+
+    // Price label
+    priceLabel.setAttribute('y', py - 6);
+    priceLabel.textContent = 'P = ' + fmt(s.P);
+
+    // CS polygon
+    if (s.Qt > 0.01) {
+      var csPts = [[0, s.P_d], [s.Qt, s.P], [0, s.P]];
+      // For above-eq: top-left at (0, P_demand_intercept). But P_d_at_Qt = P when at eq.
+      // Full CS triangle: from demand intercept (0,30) down to (Qt, P_d_at_Qt), then back at price P
+      if (s.P >= 20) {
+        csPts = [[0, 30], [s.Qt, s.P_d], [s.Qt, s.P], [0, s.P]];
+      } else {
+        // CS is demand intercept to (Qt, demand) to (Qt, P) back to... wait
+        // when P < 20 Qt=(P-10)/2, buyers are willing but sellers can't/won't supply more
+        // traded qty = Qt = (P-10)/2, P_d_at_Qt = 30-2Qt (above P), so CS is the triangle
+        // vertices: (0, 30), (Qt, P_d_at_Qt), (Qt, P), (0, P)
+        csPts = [[0, 30], [s.Qt, s.P_d], [s.Qt, s.P], [0, s.P]];
+      }
+      csPoly.setAttribute('points', polyPoints(csPts));
+      csPoly.setAttribute('display', '');
+    } else {
+      csPoly.setAttribute('display', 'none');
+    }
+
+    // PS polygon
+    if (s.Qt > 0.01) {
+      // vertices: (0, P), (Qt, P), (Qt, P_s_at_Qt), (0, 10)
+      var psPts = [[0, s.P], [s.Qt, s.P], [s.Qt, s.P_s], [0, 10]];
+      psPoly.setAttribute('points', polyPoints(psPts));
+      psPoly.setAttribute('display', '');
+    } else {
+      psPoly.setAttribute('display', 'none');
+    }
+
+    // DWL polygon
+    if (s.DWL > 0.01 && s.Qt > 0.01) {
+      // Triangle: (Qt, P_d_at_Qt), (5, 20), (Qt, P_s_at_Qt)
+      var dwlPts = [[s.Qt, s.P_d], [5, 20], [s.Qt, s.P_s]];
+      dwlPoly.setAttribute('points', polyPoints(dwlPts));
+      dwlPoly.setAttribute('display', '');
+    } else {
+      dwlPoly.setAttribute('display', 'none');
+    }
+
+    // Data panel
+    dpPrice.textContent = fmt(s.P);
+    dpCS.textContent    = fmt(s.CS);
+    dpPS.textContent    = fmt(s.PS);
+    dpTS.textContent    = fmt(s.TS);
+    dpDWL.textContent   = fmt(s.DWL);
+
+    // Equilibrium flash
+    if (snap && !snapped) {
+      snapped = true;
+      eqBadge.classList.add('show');
+      eqDot.setAttribute('r', '10');
+      if (eqFlashTimer) clearTimeout(eqFlashTimer);
+      eqFlashTimer = setTimeout(function () {
+        eqBadge.classList.remove('show');
+        eqDot.setAttribute('r', '7');
+      }, 1800);
+    } else if (!snap) {
+      snapped = false;
+    }
+  }
+
+  // Initial render
+  updateExplorer(20);
+
+  /* Drag logic */
+  function getSvgY(clientY) {
+    var rect = explorerSvg.getBoundingClientRect();
+    var svgH = 400; // viewBox height
+    var scale = svgH / rect.height;
+    return (clientY - rect.top) * scale;
+  }
+
+  function clampY(y) {
+    return Math.max(pToY(29.5), Math.min(pToY(10.5), y));
+  }
+
+  // Pointer events (covers mouse + touch)
+  priceHandle.addEventListener('pointerdown', function (e) {
+    isDragging = true;
+    priceHandle.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+
+  explorerSvg.addEventListener('pointermove', function (e) {
+    if (!isDragging) return;
+    var rawY  = getSvgY(e.clientY);
+    var clampedY = clampY(rawY);
+    var price = yToP(clampedY);
+    updateExplorer(price);
+    e.preventDefault();
+  });
+
+  explorerSvg.addEventListener('pointerup',     function () { isDragging = false; });
+  explorerSvg.addEventListener('pointercancel', function () { isDragging = false; });
+
+  // Keyboard support for the handle
+  priceHandle.addEventListener('keydown', function (e) {
+    var step = 0.5;
+    if (e.key === 'ArrowUp')   { updateExplorer(currentPrice + step); e.preventDefault(); }
+    if (e.key === 'ArrowDown') { updateExplorer(currentPrice - step); e.preventDefault(); }
+    if (e.key === 'Home')      { updateExplorer(10.5);  e.preventDefault(); }
+    if (e.key === 'End')       { updateExplorer(29.5);  e.preventDefault(); }
+  });
+
+
+  /* ─────────────────────────────────────────────────────────────
+     PRICE FLOOR INTERACTIVE
+  ──────────────────────────────────────────────────────────────── */
+  var floorToggle      = document.getElementById('floor-toggle');
+  var floorSlider      = document.getElementById('floor-slider');
+  var floorSliderWrap  = document.getElementById('floor-slider-wrap');
+  var floorPriceDisp   = document.getElementById('floor-price-display');
+  var floorSvg         = document.getElementById('floor-svg');
+  var floorLine        = document.getElementById('floor-line');
+  var floorLabelText   = document.getElementById('floor-label-text');
+  var floorCsPoly      = document.getElementById('floor-cs-poly');
+  var floorPsPoly      = document.getElementById('floor-ps-poly');
+  var floorDwlPoly     = document.getElementById('floor-dwl-poly');
+  var floorExcessGroup = document.getElementById('floor-excess-group');
+  var floorQdLine      = document.getElementById('floor-qd-line');
+  var floorQsLine      = document.getElementById('floor-qs-line');
+  var floorBracket     = document.getElementById('floor-bracket');
+  var floorExcessLabel = document.getElementById('floor-excess-label');
+  var floorQdLabel     = document.getElementById('floor-qd-label');
+  var floorQsLabel     = document.getElementById('floor-qs-label');
+  var fdpPrice         = document.getElementById('fdp-price');
+  var fdpQd            = document.getElementById('fdp-qd');
+  var fdpQs            = document.getElementById('fdp-qs');
+  var fdpExcess        = document.getElementById('fdp-excess');
+  var fdpCS            = document.getElementById('fdp-cs');
+  var fdpPS            = document.getElementById('fdp-ps');
+  var fdpTS            = document.getElementById('fdp-ts');
+  var fdpDWL           = document.getElementById('fdp-dwl');
+
+  function updateFloor(active, floorPrice) {
+    if (!active) {
+      // Show free market equilibrium
+      floorLine.setAttribute('display', 'none');
+      floorLabelText.setAttribute('display', 'none');
+      floorExcessGroup.setAttribute('display', 'none');
+      floorQdLabel.setAttribute('display', 'none');
+      floorQsLabel.setAttribute('display', 'none');
+
+      var eqCS = [[0, 30], [5, 20], [0, 20]];
+      var eqPS = [[0, 20], [5, 20], [0, 10]];
+      floorCsPoly.setAttribute('points', polyPoints(eqCS));
+      floorCsPoly.setAttribute('display', '');
+      floorPsPoly.setAttribute('points', polyPoints(eqPS));
+      floorPsPoly.setAttribute('display', '');
+      floorDwlPoly.setAttribute('display', 'none');
+
+      fdpPrice.textContent  = '$20.00 (free market)';
+      fdpQd.textContent     = '5.00';
+      fdpQs.textContent     = '5.00';
+      fdpExcess.textContent = '0.00';
+      fdpCS.textContent     = '$25.00';
+      fdpPS.textContent     = '$25.00';
+      fdpTS.textContent     = '$50.00';
+      fdpDWL.textContent    = '$0.00';
+      return;
+    }
+
+    // Floor is active and binding (floor > 20)
+    var Pf  = Math.max(20, Math.min(29.5, floorPrice));
+    var Qd  = (30 - Pf) / 2;   // quantity demanded at floor price
+    var Qs  = (Pf - 10) / 2;   // quantity supplied at floor price
+    // Actual traded = Qd (buyers limit trades when floor > eq)
+    var Qt  = Qd;
+    var excess = Qs - Qd;
+
+    // Surplus math at floor (buyers constrain to Qd)
+    var P_d_at_Qt = 30 - 2 * Qt; // = Pf (since Qt = (30-Pf)/2)
+    var P_s_at_Qt = 10 + 2 * Qt; // supply price at Qd
+
+    var CS  = (30 - Pf) * (30 - Pf) / 4;
+    // PS: sellers sell Qd units at Pf. PS = (Pf - P_s_at_Qd)*Qd/2 + ...
+    // Actually: PS = area below Pf, above supply, from 0 to Qd
+    // = (Pf - P_supply_at_0)*Qd/2 + (Pf - P_supply_at_Qd)*Qd/2  -- no, it's a trapezoid
+    // PS trapezoid: base at supply line from (0,10) to (Qd, P_s_at_Qt), top at Pf
+    // PS = Qd*(Pf - 10)/2 + Qd*(Pf - P_s_at_Qt)/2 ...
+    // Simple: PS = (Pf - 10)*Qd - 0.5*(P_s_at_Qt - 10)*Qd
+    //            = Qd * [ (Pf-10) - 0.5*(P_s_at_Qt-10) ]
+    // P_s_at_Qt = 10 + 2*Qd, Pf = 30 - 2*Qd
+    // = Qd * [(30-2Qd-10) - 0.5*(2Qd)] = Qd*(20-2Qd-Qd) = Qd*(20-3Qd)
+    // With Qd = (30-Pf)/2:
+    // PS = (30-Pf)/2 * (30-Pf)*3/2... let me just use the formula approach
+    // PS = 0.5 * Qd * (Pf + P_s_at_Qt - 10 - 10)...
+    // Trapezoid: vertices (0,10),(Qd,P_s_at_Qt),(Qd,Pf),(0,Pf)
+    // Area = Qd * (Pf - 10) - 0.5 * Qd * (Pf - P_s_at_Qt) -- no
+    // Use shoelace for trapezoid with parallel sides at x=0 and x=Qd:
+    // height = Qd, parallel sides: at x=0: (Pf - 10), at x=Qd: (Pf - P_s_at_Qt)
+    // PS = 0.5 * (Pf-10 + Pf-P_s_at_Qt) * Qd
+    var PS = 0.5 * ((Pf - 10) + (Pf - P_s_at_Qt)) * Qt;
+    var TS  = CS + PS;
+    var DWL = Math.max(0, 50 - TS);
+
+    var py_f  = pToY(Pf);
+    var py_eq = pToY(20);
+    var x_qd  = qToX(Qd);
+    var x_qs  = qToX(Qs);
+    var x_q5  = qToX(5);
+
+    // Price floor line
+    floorLine.setAttribute('y1', py_f);
+    floorLine.setAttribute('y2', py_f);
+    floorLine.setAttribute('display', '');
+
+    // Floor label
+    floorLabelText.setAttribute('y', py_f - 6);
+    floorLabelText.setAttribute('display', '');
+    floorLabelText.textContent = 'Floor $' + Pf.toFixed(1);
+
+    // CS polygon: (0,30), (Qd,Pf), (0,Pf)
+    if (Qt > 0.01) {
+      floorCsPoly.setAttribute('points', polyPoints([[0,30],[Qt,Pf],[0,Pf]]));
+      floorCsPoly.setAttribute('display', '');
+    } else {
+      floorCsPoly.setAttribute('display', 'none');
+    }
+
+    // PS polygon: (0,Pf),(Qd,Pf),(Qd,P_s_at_Qt),(0,10)
+    if (Qt > 0.01) {
+      floorPsPoly.setAttribute('points', polyPoints([[0,Pf],[Qt,Pf],[Qt,P_s_at_Qt],[0,10]]));
+      floorPsPoly.setAttribute('display', '');
+    } else {
+      floorPsPoly.setAttribute('display', 'none');
+    }
+
+    // DWL: triangle (Qt, Pf=P_d_at_Qt), (5, 20), (Qt, P_s_at_Qt)
+    if (DWL > 0.01) {
+      floorDwlPoly.setAttribute('points', polyPoints([[Qt,Pf],[5,20],[Qt,P_s_at_Qt]]));
+      floorDwlPoly.setAttribute('display', '');
+    } else {
+      floorDwlPoly.setAttribute('display', 'none');
+    }
+
+    // Excess supply bracket
+    if (excess > 0.2) {
+      floorExcessGroup.setAttribute('display', '');
+      floorQdLine.setAttribute('x1', x_qd); floorQdLine.setAttribute('x2', x_qd);
+      floorQdLine.setAttribute('y1', py_f); floorQdLine.setAttribute('y2', pToY(0) + 10);
+      floorQsLine.setAttribute('x1', x_qs); floorQsLine.setAttribute('x2', x_qs);
+      floorQsLine.setAttribute('y1', py_f); floorQsLine.setAttribute('y2', pToY(0) + 10);
+
+      var bracketY = pToY(0) + 4;
+      floorBracket.setAttribute('x1', x_qd); floorBracket.setAttribute('y1', bracketY);
+      floorBracket.setAttribute('x2', x_qs); floorBracket.setAttribute('y2', bracketY);
+
+      var midX = (x_qd + x_qs) / 2;
+      floorExcessLabel.setAttribute('x', midX);
+      floorExcessLabel.setAttribute('y', bracketY - 5);
+
+      floorQdLabel.setAttribute('x', x_qd);
+      floorQdLabel.setAttribute('display', '');
+      floorQsLabel.setAttribute('x', x_qs);
+      floorQsLabel.setAttribute('display', '');
+    } else {
+      floorExcessGroup.setAttribute('display', 'none');
+      floorQdLabel.setAttribute('display', 'none');
+      floorQsLabel.setAttribute('display', 'none');
+    }
+
+    // Data panel
+    fdpPrice.textContent  = '$' + Pf.toFixed(2) + ' (floor)';
+    fdpQd.textContent     = Qd.toFixed(2);
+    fdpQs.textContent     = Qs.toFixed(2);
+    fdpExcess.textContent = excess.toFixed(2);
+    fdpCS.textContent     = fmt(CS);
+    fdpPS.textContent     = fmt(PS);
+    fdpTS.textContent     = fmt(TS);
+    fdpDWL.textContent    = fmt(DWL);
+
+    floorPriceDisp.textContent = '$' + Pf.toFixed(2);
+  }
+
+  // Initial: show free market
+  updateFloor(false, 24);
+
+  floorToggle.addEventListener('change', function () {
+    var active = floorToggle.checked;
+    if (active) {
+      floorSliderWrap.style.display = 'flex';
+    } else {
+      floorSliderWrap.style.display = 'none';
+    }
+    updateFloor(active, parseFloat(floorSlider.value));
+  });
+
+  floorSlider.addEventListener('input', function () {
+    updateFloor(floorToggle.checked, parseFloat(floorSlider.value));
+  });
+
+
+  /* ─────────────────────────────────────────────────────────────
+     SCROLL REVEAL
+  ──────────────────────────────────────────────────────────────── */
+  var revealTargets = document.querySelectorAll('.section, .hero');
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    revealTargets.forEach(function (el) { io.observe(el); });
+  } else {
+    // Fallback: show all immediately
+    revealTargets.forEach(function (el) { el.classList.add('visible'); });
+  }
+
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Microeconomics Ch 1-4 Cheat Sheet</title>
+  <style>
+    :root {
+      --bg: #f6f7f4;
+      --paper: #ffffff;
+      --ink: #101827;
+      --muted: #4b5563;
+      --line: #d6dde5;
+      --accent: #0f4c5c;
+      --soft: #eff4f7;
+      --warn: #7b4d2a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 16px;
+      color: var(--ink);
+      background: radial-gradient(circle at top left, #fff 0%, var(--bg) 60%);
+      font-family: "Avenir Next", "Segoe UI", "Trebuchet MS", sans-serif;
+      line-height: 1.25;
+    }
+    .sheet {
+      max-width: 980px;
+      margin: 0 auto;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 10px 24px rgba(16, 24, 39, 0.07);
+      padding: 14px;
+    }
+    .top {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: end;
+      border-bottom: 2px solid var(--line);
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      color: var(--accent);
+      letter-spacing: .01em;
+    }
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .quick {
+      border: 1px solid var(--line);
+      background: #fbfdff;
+      border-radius: 10px;
+      padding: 8px 10px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    .quick strong { color: var(--accent); }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 9px;
+      background: linear-gradient(180deg, #fff 0%, #fcfdff 100%);
+      break-inside: avoid;
+    }
+    h2 {
+      margin: 0 0 6px;
+      font-size: 15px;
+      color: var(--accent);
+      letter-spacing: .01em;
+    }
+    ul, ol {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 13px;
+    }
+    li { margin: 2px 0; }
+    .mini {
+      margin: 6px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .trap {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--warn);
+      font-weight: 700;
+    }
+    .formula {
+      display: inline-block;
+      margin-top: 5px;
+      font-size: 12px;
+      font-family: "SF Mono", Menlo, Consolas, monospace;
+      background: #f7fafc;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 4px 6px;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+    .table th, .table td {
+      border: 1px solid var(--line);
+      padding: 5px 6px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .table th {
+      background: var(--soft);
+      font-weight: 700;
+    }
+    .foot {
+      margin-top: 9px;
+      border-top: 2px solid var(--line);
+      padding-top: 8px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 7px 8px;
+      background: #f8fbff;
+      font-size: 12px;
+    }
+    .box strong { color: var(--accent); }
+
+    @media (max-width: 880px) {
+      .grid, .foot { grid-template-columns: 1fr; }
+      h1 { font-size: 21px; }
+    }
+
+    @media print {
+      @page { size: Letter; margin: 0.45in; }
+      body { background: #fff; padding: 0; }
+      .sheet {
+        max-width: none;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="sheet">
+    <header class="top">
+      <h1>Principles of Microeconomics: Chapters 1-4</h1>
+      <p class="sub">Exam Cheat Sheet</p>
+    </header>
+
+    <section class="quick">
+      <strong>Backbone in 20 seconds:</strong>
+      <strong>Opportunity Cost</strong> (best forgone) -> <strong>Comparative Advantage</strong> (lower OC) -> <strong>Supply/Demand</strong> (price coordinates choices) -> <strong>Shift vs Movement</strong> (most tested distinction).
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Chapter 1: Ten Principles</h2>
+        <ol>
+          <li><strong>Trade-offs</strong> are unavoidable.</li>
+          <li><strong>Opportunity cost</strong> = best forgone alternative.</li>
+          <li><strong>Marginal thinking</strong>: compare MB vs MC for the next unit.</li>
+          <li><strong>Incentives</strong> change behavior.</li>
+          <li><strong>Trade</strong> can benefit all sides.</li>
+          <li><strong>Markets</strong> usually organize activity well.</li>
+          <li><strong>Government</strong> can improve outcomes with market failure/equity concerns.</li>
+          <li><strong>Productivity</strong> drives living standards; money growth drives inflation (long run).</li>
+        </ol>
+        <p class="trap">Trap: cost is not all alternatives, only the best forgone one.</p>
+      </article>
+
+      <article class="card">
+        <h2>Chapter 2: Thinking Like an Economist</h2>
+        <ol>
+          <li><strong>Models</strong> simplify to isolate cause/effect.</li>
+          <li><strong>Circular flow</strong>: households sell factors, firms sell goods/services.</li>
+          <li><strong>PPF:</strong> on-curve efficient, inside inefficient, outside unattainable.</li>
+          <li><strong>Bowed-out PPF</strong> means increasing opportunity cost.</li>
+          <li><strong>Micro vs Macro:</strong> market-level vs economy-wide.</li>
+          <li><strong>Positive</strong> = what is; <strong>Normative</strong> = what ought to be.</li>
+          <li>Economists disagree due to facts/assumptions or values.</li>
+        </ol>
+      </article>
+
+      <article class="card">
+        <h2>Chapter 3: Interdependence & Trade</h2>
+        <ol>
+          <li><strong>Absolute advantage</strong> = higher output.</li>
+          <li><strong>Comparative advantage</strong> = lower opportunity cost.</li>
+          <li>Specialize by comparative advantage, then trade.</li>
+          <li>Mutual gains require trade price between each side's OC.</li>
+          <li><strong>Imports</strong> = buy from abroad; <strong>Exports</strong> = sell abroad.</li>
+        </ol>
+        <div class="formula">OC of 1 unit of A = (max B output) / (max A output)</div>
+        <p class="trap">Trap: do not assign specialization from absolute advantage.</p>
+      </article>
+
+      <article class="card">
+        <h2>Chapter 4: Supply, Demand, Equilibrium</h2>
+        <ol>
+          <li><strong>Own price changes</strong> -> movement along curve.</li>
+          <li><strong>Non-price changes</strong> -> shift curve.</li>
+          <li><strong>Equilibrium</strong>: Qd = Qs.</li>
+          <li>Price below equilibrium -> <strong>shortage</strong> (Qd &gt; Qs).</li>
+          <li>Price above equilibrium -> <strong>surplus</strong> (Qs &gt; Qd).</li>
+          <li>Demand shifts right (supply fixed) -> <strong>P up, Q up</strong>.</li>
+        </ol>
+      </article>
+
+      <article class="card">
+        <h2>Shifters You Must Memorize</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Demand Shifters (1-5)</th>
+              <th>Supply Shifters (1-6)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                1. <strong>Income</strong><br>
+                2. <strong>Tastes</strong><br>
+                3. <strong>Related goods prices</strong><br>
+                4. <strong>Expectations</strong><br>
+                5. <strong>Number of buyers</strong>
+              </td>
+              <td>
+                1. <strong>Input costs</strong><br>
+                2. <strong>Technology</strong><br>
+                3. <strong>Expectations</strong><br>
+                4. <strong>Number of sellers</strong><br>
+                5. <strong>Natural/social shocks</strong><br>
+                6. <strong>Taxes/regulation</strong>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="card">
+        <h2>High-Yield Distinctions</h2>
+        <table class="table">
+          <thead>
+            <tr><th>Pair</th><th>Fast Difference</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Efficiency vs Equality</strong></td><td>Size of total surplus vs how evenly it is split.</td></tr>
+            <tr><td><strong>Shift vs Movement</strong></td><td>New curve vs new point on same curve.</td></tr>
+            <tr><td><strong>Absolute vs Comparative</strong></td><td>Productivity vs opportunity cost.</td></tr>
+            <tr><td><strong>Positive vs Normative</strong></td><td>Fact claim vs value judgment.</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <section class="foot">
+      <div class="box">
+        <strong>4-Step Graph Method</strong><br>
+        1) Which curve shifts? 2) Left or right? 3) New intersection? 4) New equilibrium price and quantity.
+      </div>
+      <div class="box">
+        <strong>Last-Minute Checks</strong><br>
+        Coffee price up and tea substitute -> tea demand shifts right. Own price change alone -> movement, not shift.
+      </div>
+    </section>
+  </main>
+</body>
+</html>

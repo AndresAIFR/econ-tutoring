@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chapter 5 Deep Dive - Elasticity</title>
+  <style>
+    :root {
+      --bg: #f8f6f1;
+      --ink: #1e1f1c;
+      --muted: #555c53;
+      --accent: #0f6e8c;
+      --accent2: #bf5b17;
+      --panel: #ffffff;
+      --line: #d7d2c4;
+    }
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Trebuchet MS", sans-serif;
+      background: linear-gradient(180deg, #fff, var(--bg));
+      color: var(--ink);
+      padding: 22px;
+      line-height: 1.35;
+    }
+    h1, h2, h3 { margin: 0 0 8px; }
+    p { margin: 8px 0; color: var(--muted); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+    }
+    code {
+      background: #f1efe7;
+      border: 1px solid #e5e0d2;
+      border-radius: 5px;
+      padding: 1px 5px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; }
+    th { background: #f5f2e8; }
+    svg { width: 100%; height: auto; background: #fff; }
+    .good { color: #1f7a3e; font-weight: 700; }
+    .warn { color: #9d4e00; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>Econ 101 - Chapter 5 Deep Dive</h1>
+  <p>Goal: move from quick multiple-choice recognition to full reasoning and computation.</p>
+
+  <div class="grid">
+    <section class="card">
+      <h2>1) What Elasticity Means</h2>
+      <p><b>Elasticity</b> asks: when X changes by a percentage, how much does Y change by a percentage?</p>
+      <p><code>Price elasticity of demand = % change in quantity demanded / % change in price</code></p>
+      <p>Classification uses absolute value:</p>
+      <ul>
+        <li><b>Elastic</b>: |E| &gt; 1</li>
+        <li><b>Unit elastic</b>: |E| = 1</li>
+        <li><b>Inelastic</b>: |E| &lt; 1</li>
+      </ul>
+      <p><b>Revenue rule:</b> if demand is elastic, raising price lowers total revenue. If inelastic, raising price raises total revenue.</p>
+    </section>
+
+    <section class="card">
+      <h2>2) Midpoint Method (stable on tests)</h2>
+      <p>Use midpoint to avoid getting different answers based on direction:</p>
+      <p><code>%ΔQ = (Q2-Q1)/((Q1+Q2)/2)</code></p>
+      <p><code>%ΔP = (P2-P1)/((P1+P2)/2)</code></p>
+      <p><code>E = %ΔQ / %ΔP</code></p>
+      <p class="warn">Common trap: standard percent change from an arbitrary base gives asymmetric answers.</p>
+    </section>
+
+    <section class="card">
+      <h2>3) Why Narrow Markets Are More Elastic</h2>
+      <p>Narrow market: <i>"Coke at one gas station"</i>.</p>
+      <p>Broad market: <i>"all soda in the U.S."</i>.</p>
+      <p>Narrower definition means more close substitutes nearby, so demand is more elastic.</p>
+      <p>As market definition broadens, elasticity usually falls because there are fewer near substitutes for the whole category.</p>
+    </section>
+
+    <section class="card">
+      <h2>4) Graph Intuition</h2>
+      <svg viewBox="0 0 420 280" aria-label="Elastic versus inelastic demand">
+        <line x1="40" y1="240" x2="390" y2="240" stroke="#000" stroke-width="2"/>
+        <line x1="40" y1="240" x2="40" y2="20" stroke="#000" stroke-width="2"/>
+
+        <line x1="60" y1="40" x2="360" y2="225" stroke="#0f6e8c" stroke-width="3"/>
+        <text x="315" y="220" fill="#0f6e8c" font-size="12">Flatter: more elastic</text>
+
+        <line x1="140" y1="40" x2="210" y2="225" stroke="#bf5b17" stroke-width="3"/>
+        <text x="216" y="180" fill="#bf5b17" font-size="12">Steeper: less elastic</text>
+
+        <text x="190" y="265" font-size="12">Quantity</text>
+        <text x="8" y="22" font-size="12">Price</text>
+      </svg>
+      <p>Along a straight-line demand curve, elasticity changes by location: top section is elastic, midpoint is unit elastic, bottom section is inelastic.</p>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top:16px;">
+    <h2>Worked Examples (from your worksheet)</h2>
+    <table>
+      <tr><th>Problem</th><th>Result</th><th>Reasoning Target</th></tr>
+      <tr><td>Q1: Qd=20-P, Qs=2P-4</td><td>P*=8, Q*=12. Binding floor if Pfloor&gt;8. At P=10: surplus=6.</td><td>Can you derive equilibrium and binding condition without guessing?</td></tr>
+      <tr><td>Q2 with tax t=50</td><td>Before tax: P*=200, Q*=30. After tax: buyers pay 237.5, sellers receive 187.5, Q=26.25.</td><td>Practice wedge logic: buyer price - seller price = tax.</td></tr>
+      <tr><td>Q3 midpoint elasticity of supply</td><td>~0.485 (inelastic)</td><td>Distinguish elasticity from slope.</td></tr>
+      <tr><td>Q4 income elasticity</td><td>negative (~ -0.17 midpoint)</td><td>Negative income elasticity => inferior good.</td></tr>
+      <tr><td>Q5 cross-price</td><td>Exy=-0.4 and orange price -3% => apple demand +1.2%</td><td>Negative cross-price means complements.</td></tr>
+      <tr><td>Q6 demand Q=50-0.5P, P:60->40</td><td>Standard method: 1.5; midpoint: 1.0</td><td>Know why midpoint is preferred for interval comparisons.</td></tr>
+    </table>
+  </section>
+
+  <section class="card" style="margin-top:16px;">
+    <h2>Deep Checks</h2>
+    <p>1) Explain why your tea-coffee logic gives a <b>positive</b> cross-price elasticity without assuming tea demand is elastic.</p>
+    <p>2) For <code>Q = 50 - 0.5P</code>, compute point elasticity at P=60 and P=40 and explain why it changes along one line.</p>
+    <p>3) Give one case where slope is the same but elasticity differs.</p>
+    <p class="good">If you can answer these clearly, you are above worksheet depth.</p>
+  </section>
+</body>
+</html>

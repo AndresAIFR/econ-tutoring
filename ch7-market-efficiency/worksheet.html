@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch 7 Worksheet — Market Efficiency</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Newsreader:ital,opsz,wght@0,6..72,300..800;1,6..72,300..800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Design tokens ─────────────────────────────────────────────── */
+    :root {
+      --bg:           #faf6ef;
+      --card:         #ffffff;
+      --card-border:  #e8e3d8;
+      --text:         #2c2c35;
+      --text-muted:   #6b6b78;
+      --heading:      #1a1a2e;
+      --cs:           #4a90d9;
+      --ps:           #d96c4a;
+      --dwl:          #c9a832;
+      --eq-green:     #3a7d5c;
+      --accent:       #1e3a5f;
+      --correct:      #3a7d5c;
+      --correct-bg:   rgba(58,125,92,0.08);
+      --wrong:        #c44040;
+      --wrong-bg:     rgba(196,64,64,0.06);
+      --hint-bg:      rgba(201,168,50,0.1);
+      --nav-h:        56px;
+      --prog-h:       44px;
+    }
+
+    /* ── Reset / base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.7;
+      padding-top: calc(var(--nav-h) + var(--prog-h));
+    }
+
+    code, .mono {
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 0.88em;
+    }
+
+    p { color: var(--text); }
+
+    /* ── Navigation ───────────────────────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      background: rgba(250,246,239,0.96);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--card-border);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-inner {
+      width: 100%;
+      max-width: 760px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-brand {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      display: block;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 15px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-links a:hover { background: var(--card-border); color: var(--heading); }
+
+    .nav-links a.active {
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* ── Progress bar ─────────────────────────────────────────────── */
+    .progress-bar-wrap {
+      position: fixed;
+      top: var(--nav-h);
+      left: 0; right: 0;
+      height: var(--prog-h);
+      background: rgba(250,246,239,0.97);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--card-border);
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .progress-inner {
+      width: 100%;
+      max-width: 760px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .progress-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+      min-width: 96px;
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 7px;
+      background: var(--card-border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--eq-green), var(--cs));
+      border-radius: 4px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    /* ── Layout wrapper ───────────────────────────────────────────── */
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px 96px;
+    }
+
+    /* ── Hero ─────────────────────────────────────────────────────── */
+    .hero {
+      padding: 48px 0 8px;
+    }
+
+    .hero-accent {
+      display: block;
+      width: 48px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--cs), var(--ps));
+      border-radius: 2px;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: clamp(26px, 5vw, 38px);
+      font-weight: 700;
+      font-variation-settings: 'opsz' 36;
+      color: var(--heading);
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ── Part heading ─────────────────────────────────────────────── */
+    .part-heading {
+      margin-top: 52px;
+      margin-bottom: 4px;
+    }
+
+    .part-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .part-heading h2 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: clamp(20px, 3.5vw, 26px);
+      font-weight: 700;
+      font-variation-settings: 'opsz' 26;
+      color: var(--heading);
+      line-height: 1.25;
+    }
+
+    /* ── Context box ──────────────────────────────────────────────── */
+    .context-box {
+      background: rgba(74,144,217,0.06);
+      border: 1px solid rgba(74,144,217,0.22);
+      border-left: 3px solid var(--cs);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 20px 0 8px;
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .context-box .context-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cs);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    /* ── Question card ────────────────────────────────────────────── */
+    .q-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 24px 28px;
+      box-shadow: 0 2px 10px rgba(28,28,40,0.05);
+      margin-top: 16px;
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+    }
+
+    .q-card.state-correct {
+      border-color: var(--correct);
+      background: var(--correct-bg);
+      box-shadow: 0 2px 12px rgba(58,125,92,0.1);
+    }
+
+    .q-card.state-wrong {
+      border-color: rgba(201,168,50,0.5);
+      background: var(--hint-bg);
+    }
+
+    .q-card.state-revealed {
+      border-color: rgba(196,64,64,0.3);
+      background: var(--wrong-bg);
+    }
+
+    .q-number {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .q-text {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--heading);
+      margin-bottom: 18px;
+      line-height: 1.55;
+    }
+
+    /* ── Short answer inputs ──────────────────────────────────────── */
+    .input-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .input-group label {
+      font-family: 'Newsreader', serif;
+      font-size: 14px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .input-group input {
+      font-family: 'Fira Code', monospace;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--heading);
+      background: var(--bg);
+      border: 1.5px solid var(--card-border);
+      border-radius: 8px;
+      padding: 9px 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+
+    .input-group input:focus {
+      border-color: var(--cs);
+      box-shadow: 0 0 0 3px rgba(74,144,217,0.12);
+    }
+
+    .input-group input:disabled {
+      opacity: 0.75;
+      cursor: not-allowed;
+    }
+
+    .state-correct .input-group input {
+      border-color: var(--correct);
+      background: rgba(58,125,92,0.04);
+    }
+
+    .state-revealed .input-group input {
+      border-color: rgba(196,64,64,0.3);
+    }
+
+    /* ── MC / T-F options ─────────────────────────────────────────── */
+    .mc-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .mc-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 14px;
+      border: 1.5px solid var(--card-border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      user-select: none;
+    }
+
+    .mc-option:hover:not(.disabled) {
+      border-color: rgba(74,144,217,0.4);
+      background: rgba(74,144,217,0.04);
+    }
+
+    .mc-option input[type="radio"] {
+      margin-top: 3px;
+      accent-color: var(--cs);
+      flex-shrink: 0;
+    }
+
+    .mc-option.selected {
+      border-color: var(--cs);
+      background: rgba(74,144,217,0.06);
+    }
+
+    .mc-option.correct-answer {
+      border-color: var(--correct);
+      background: var(--correct-bg);
+    }
+
+    .mc-option.wrong-choice {
+      border-color: rgba(196,64,64,0.35);
+      background: rgba(196,64,64,0.04);
+    }
+
+    .mc-option.disabled {
+      cursor: not-allowed;
+    }
+
+    .mc-option-text {
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+    .mc-icon {
+      flex-shrink: 0;
+      font-size: 15px;
+      margin-top: 2px;
+    }
+
+    /* ── T/F toggle ───────────────────────────────────────────────── */
+    .tf-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .tf-btn {
+      flex: 1;
+      padding: 10px 0;
+      border: 1.5px solid var(--card-border);
+      border-radius: 8px;
+      background: var(--bg);
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+    }
+
+    .tf-btn:hover:not(:disabled) {
+      border-color: rgba(74,144,217,0.5);
+      color: var(--heading);
+      background: rgba(74,144,217,0.05);
+    }
+
+    .tf-btn.selected {
+      border-color: var(--cs);
+      background: rgba(74,144,217,0.08);
+      color: var(--cs);
+    }
+
+    .tf-btn.correct-answer {
+      border-color: var(--correct);
+      background: var(--correct-bg);
+      color: var(--correct);
+    }
+
+    .tf-btn.wrong-choice {
+      border-color: rgba(196,64,64,0.35);
+      background: rgba(196,64,64,0.05);
+      color: var(--wrong);
+    }
+
+    .tf-btn:disabled { cursor: not-allowed; }
+
+    /* ── Action row ───────────────────────────────────────────────── */
+    .action-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-check {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 8px 22px;
+      border-radius: 20px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.1s;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-check:hover:not(:disabled) {
+      background: #162d4a;
+      transform: translateY(-1px);
+    }
+
+    .btn-check:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-hint {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 14px;
+      color: var(--dwl);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .btn-hint:hover { color: #9e7f1a; }
+
+    /* ── Feedback areas ───────────────────────────────────────────── */
+    .feedback-area {
+      margin-top: 14px;
+      overflow: hidden;
+    }
+
+    .hint-box {
+      background: var(--hint-bg);
+      border: 1px solid rgba(201,168,50,0.3);
+      border-left: 3px solid var(--dwl);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      font-size: 15px;
+      color: var(--text);
+      display: none;
+    }
+
+    .hint-box.show { display: block; }
+
+    .hint-box .hint-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dwl);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .explanation-box {
+      background: var(--correct-bg);
+      border: 1px solid rgba(58,125,92,0.2);
+      border-left: 3px solid var(--correct);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 15px;
+      color: var(--text);
+      display: none;
+    }
+
+    .explanation-box.show { display: block; }
+
+    .explanation-box .expl-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--correct);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: none;
+    }
+
+    .status-badge.correct {
+      background: var(--correct-bg);
+      color: var(--correct);
+      border: 1px solid rgba(58,125,92,0.25);
+      display: inline-flex;
+    }
+
+    .status-badge.wrong {
+      background: var(--wrong-bg);
+      color: var(--wrong);
+      border: 1px solid rgba(196,64,64,0.2);
+      display: inline-flex;
+    }
+
+    /* ── Figure image card ────────────────────────────────────────── */
+    .figure-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(28,28,40,0.05);
+      margin-top: 24px;
+      margin-bottom: 4px;
+    }
+
+    .figure-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .figure-card img {
+      max-width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      display: block;
+    }
+
+    /* ── Score summary ────────────────────────────────────────────── */
+    .score-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 2px 14px rgba(28,28,40,0.07);
+      margin-top: 52px;
+      text-align: center;
+    }
+
+    .score-title {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 15px;
+      font-weight: 600;
+      font-variation-settings: 'opsz' 15;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .score-number {
+      font-family: 'Fira Code', monospace;
+      font-size: 52px;
+      font-weight: 600;
+      color: var(--heading);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .score-number span {
+      font-size: 28px;
+      color: var(--text-muted);
+    }
+
+    .score-verdict {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 20px;
+      font-weight: 600;
+      font-variation-settings: 'opsz' 20;
+      margin-bottom: 20px;
+      transition: color 0.3s;
+    }
+
+    .score-verdict.great { color: var(--eq-green); }
+    .score-verdict.good  { color: var(--cs); }
+    .score-verdict.keep  { color: var(--dwl); }
+
+    .score-track {
+      height: 10px;
+      background: var(--card-border);
+      border-radius: 5px;
+      overflow: hidden;
+      margin: 0 auto 24px;
+      max-width: 360px;
+    }
+
+    .score-fill {
+      height: 100%;
+      border-radius: 5px;
+      background: linear-gradient(90deg, var(--eq-green), var(--cs));
+      transition: width 0.6s ease;
+    }
+
+    .return-link {
+      display: inline-block;
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      padding: 8px 22px;
+      border: 1.5px solid var(--accent);
+      border-radius: 20px;
+      transition: background 0.18s, color 0.18s;
+    }
+
+    .return-link:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* ── Responsive ───────────────────────────────────────────────── */
+    @media (max-width: 540px) {
+      body { font-size: 16px; }
+      .q-card { padding: 18px 18px; }
+      .input-group { min-width: 120px; }
+      .score-number { font-size: 40px; }
+    }
+
+    /* ── Animation: slide in ──────────────────────────────────────── */
+    .q-card {
+      animation: slideUp 0.35s ease both;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Navigation ──────────────────────────────────────────────── -->
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a class="nav-brand" href="index.html">Econ 101 · Ch 7</a>
+      <ul class="nav-links">
+        <li><a href="index.html">Lesson</a></li>
+        <li><a href="worksheet.html" class="active" aria-current="page">Worksheet</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── Progress bar ────────────────────────────────────────────── -->
+  <div class="progress-bar-wrap" role="status" aria-live="polite" aria-label="Worksheet progress">
+    <div class="progress-inner">
+      <span class="progress-label" id="prog-label">0 / 17 complete</span>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-fill" id="prog-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Page content ────────────────────────────────────────────── -->
+  <main class="page" id="main-content">
+
+    <!-- Hero -->
+    <header class="hero">
+      <span class="hero-accent" aria-hidden="true"></span>
+      <h1>Practice Worksheet</h1>
+      <p class="hero-sub">Chapter 7 — Consumers, Producers &amp; Market Efficiency</p>
+    </header>
+
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <!-- PART 1: SHORT ANSWER                                        -->
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <div class="part-heading">
+      <span class="part-label">Part 1</span>
+      <h2>Short Answer — The Strawberry Market</h2>
+    </div>
+
+    <!-- Context box 1 -->
+    <div class="context-box" role="note">
+      <span class="context-label">Given</span>
+      In the market for strawberries, the demand is <code>P = 30 − 2Q<sub>d</sub></code> and the supply is <code>P = 10 + 2Q<sub>s</sub></code>.
+    </div>
+
+    <!-- Question a -->
+    <article class="q-card" id="q-a" aria-label="Question a">
+      <div class="q-number">Question a</div>
+      <div class="q-text">What is the equilibrium price and quantity for strawberries?</div>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="qa-price">Equilibrium Price ($)</label>
+          <input type="number" id="qa-price" placeholder="0" step="0.5" aria-label="Equilibrium price in dollars" />
+        </div>
+        <div class="input-group">
+          <label for="qa-qty">Equilibrium Quantity</label>
+          <input type="number" id="qa-qty" placeholder="0" step="0.5" aria-label="Equilibrium quantity" />
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn-check" onclick="checkSA('a')">Check</button>
+        <button class="btn-hint" onclick="showHint('a')" aria-label="Show hint for question a">Show hint</button>
+        <span class="status-badge" id="badge-a"></span>
+      </div>
+      <div class="feedback-area" id="feedback-a">
+        <div class="hint-box" id="hint-a">
+          <span class="hint-label">Hint</span>
+          Set demand equal to supply: <code>30 − 2Q = 10 + 2Q</code>. Solve for Q, then plug back in.
+        </div>
+        <div class="explanation-box" id="expl-a">
+          <span class="expl-label">Explanation</span>
+          Setting <code>30 − 2Q = 10 + 2Q</code> gives <code>20 = 4Q</code>, so <strong>Q* = 5</strong>. Plugging back in: <code>P* = 30 − 2(5) = <strong>$20</strong></code>. At this price, quantity demanded equals quantity supplied.
+        </div>
+      </div>
+    </article>
+
+    <!-- Question b -->
+    <article class="q-card" id="q-b" aria-label="Question b">
+      <div class="q-number">Question b</div>
+      <div class="q-text">What is the Consumer and Producer Surplus?</div>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="qb-cs">Consumer Surplus ($)</label>
+          <input type="number" id="qb-cs" placeholder="0" step="0.5" aria-label="Consumer surplus in dollars" />
+        </div>
+        <div class="input-group">
+          <label for="qb-ps">Producer Surplus ($)</label>
+          <input type="number" id="qb-ps" placeholder="0" step="0.5" aria-label="Producer surplus in dollars" />
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn-check" onclick="checkSA('b')">Check</button>
+        <button class="btn-hint" onclick="showHint('b')" aria-label="Show hint for question b">Show hint</button>
+        <span class="status-badge" id="badge-b"></span>
+      </div>
+      <div class="feedback-area" id="feedback-b">
+        <div class="hint-box" id="hint-b">
+          <span class="hint-label">Hint</span>
+          CS is the triangle above the price and below demand. Use the area formula: <code>½ × base × height</code>.
+        </div>
+        <div class="explanation-box" id="expl-b">
+          <span class="expl-label">Explanation</span>
+          <strong>CS</strong> = ½ × (30 − 20) × 5 = ½ × 10 × 5 = <strong>$25</strong>. The demand intercept is $30, equilibrium price is $20, so the height of the CS triangle is $10, and the base is 5 units.<br><br>
+          <strong>PS</strong> = ½ × (20 − 10) × 5 = ½ × 10 × 5 = <strong>$25</strong>. The supply intercept is $10, so the height of the PS triangle is also $10.
+        </div>
+      </div>
+    </article>
+
+    <!-- Context box 2 -->
+    <div class="context-box" role="note" style="margin-top:24px;">
+      <span class="context-label">New scenario</span>
+      Suppose the local government wants to help strawberry farmers and places a <strong>price floor of $24</strong>.
+    </div>
+
+    <!-- Question c -->
+    <article class="q-card" id="q-c" aria-label="Question c">
+      <div class="q-number">Question c</div>
+      <div class="q-text">What is the surplus (excess supply) created by the price floor?</div>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="qc-surplus">Excess Supply (units)</label>
+          <input type="number" id="qc-surplus" placeholder="0" step="0.5" aria-label="Excess supply in units" />
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn-check" onclick="checkSA('c')">Check</button>
+        <button class="btn-hint" onclick="showHint('c')" aria-label="Show hint for question c">Show hint</button>
+        <span class="status-badge" id="badge-c"></span>
+      </div>
+      <div class="feedback-area" id="feedback-c">
+        <div class="hint-box" id="hint-c">
+          <span class="hint-label">Hint</span>
+          Find Q<sub>d</sub> and Q<sub>s</sub> at P = $24, then subtract. Remember: the floor is above equilibrium.
+        </div>
+        <div class="explanation-box" id="expl-c">
+          <span class="expl-label">Explanation</span>
+          At P = $24: <code>Q<sub>d</sub> = (30 − 24) / 2 = 3 units</code>. <code>Q<sub>s</sub> = (24 − 10) / 2 = 7 units</code>. Surplus = 7 − 3 = <strong>4 units</strong> of excess supply. Farmers want to sell 7 but buyers only want 3.
+        </div>
+      </div>
+    </article>
+
+    <!-- Question d -->
+    <article class="q-card" id="q-d" aria-label="Question d">
+      <div class="q-number">Question d</div>
+      <div class="q-text">What is the new consumer and producer surplus after the price floor?</div>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="qd-cs">Consumer Surplus ($)</label>
+          <input type="number" id="qd-cs" placeholder="0" step="0.5" aria-label="New consumer surplus in dollars" />
+        </div>
+        <div class="input-group">
+          <label for="qd-ps">Producer Surplus ($)</label>
+          <input type="number" id="qd-ps" placeholder="0" step="0.5" aria-label="New producer surplus in dollars" />
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn-check" onclick="checkSA('d')">Check</button>
+        <button class="btn-hint" onclick="showHint('d')" aria-label="Show hint for question d">Show hint</button>
+        <span class="status-badge" id="badge-d"></span>
+      </div>
+      <div class="feedback-area" id="feedback-d">
+        <div class="hint-box" id="hint-d">
+          <span class="hint-label">Hint</span>
+          Only 3 units are traded (quantity demanded at $24). CS is now a smaller triangle. PS is a trapezoid — draw it out!
+        </div>
+        <div class="explanation-box" id="expl-d">
+          <span class="expl-label">Explanation</span>
+          Only Q<sub>d</sub> = 3 units are actually traded (you can't force buyers to buy).<br><br>
+          <strong>CS</strong> = ½ × (30 − 24) × 3 = ½ × 6 × 3 = <strong>$9</strong>.<br><br>
+          <strong>PS</strong>: sellers receive $24 for 3 units, and their costs range from $10 to $16 (supply at Q = 3: P = 10 + 6 = 16). PS is a trapezoid: ½ × (24 − 10 + 24 − 16) × 3 = ½ × (14 + 8) × 3 = <strong>$33</strong>. Alternatively: PS = (24 − 10)(3) − ½(16 − 10)(3) = 42 − 9 = $33.
+        </div>
+      </div>
+    </article>
+
+    <!-- Question e -->
+    <article class="q-card" id="q-e" aria-label="Question e">
+      <div class="q-number">Question e</div>
+      <div class="q-text">What is the deadweight loss from the price floor?</div>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="qe-dwl">Deadweight Loss ($)</label>
+          <input type="number" id="qe-dwl" placeholder="0" step="0.5" aria-label="Deadweight loss in dollars" />
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn-check" onclick="checkSA('e')">Check</button>
+        <button class="btn-hint" onclick="showHint('e')" aria-label="Show hint for question e">Show hint</button>
+        <span class="status-badge" id="badge-e"></span>
+      </div>
+      <div class="feedback-area" id="feedback-e">
+        <div class="hint-box" id="hint-e">
+          <span class="hint-label">Hint</span>
+          DWL = Old Total Surplus − New Total Surplus. Or calculate the triangle between the curves from Q = 3 to Q = 5.
+        </div>
+        <div class="explanation-box" id="expl-e">
+          <span class="expl-label">Explanation</span>
+          Original TS = $50. New TS = CS + PS = $9 + $33 = $42. DWL = $50 − $42 = <strong>$8</strong>.<br><br>
+          Geometrically, the DWL is the triangle with vertices at (Q = 3, P = $24), (Q = 5, P = $20), and (Q = 3, P = $16). Its area = ½ × ($24 − $16) × (5 − 3) = ½ × $8 × 2 = <strong>$8</strong>. These are gains from trade that no longer happen because the price floor prevents those units from being traded.
+        </div>
+      </div>
+    </article>
+
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <!-- PART 2: MULTIPLE CHOICE                                     -->
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <div class="part-heading" style="margin-top:60px;">
+      <span class="part-label">Part 2</span>
+      <h2>Multiple Choice</h2>
+    </div>
+
+    <!-- Figure 7-1 -->
+    <div class="figure-card" role="img" aria-label="Figure 7-1: Supply and demand diagram with labeled areas">
+      <div class="figure-label">Figure 7-1</div>
+      <img src="figures/figure-7-1.png" alt="Figure 7-1: A supply and demand graph showing areas A, B, C, D labeled between price levels P1 and P2 and quantities Q1 and Q2" />
+    </div>
+
+    <!-- Q1 -->
+    <article class="q-card" id="q-1" aria-label="Question 1">
+      <div class="q-number">Question 1</div>
+      <div class="q-text">Refer to Figure 7-1. When the price is P₂, consumer surplus is</div>
+      <div class="mc-options" role="radiogroup" aria-label="Answer choices for question 1">
+        <label class="mc-option" id="q1-opt-a">
+          <input type="radio" name="q1" value="a" onchange="selectMC('1','a')" /> <span class="mc-option-text">A + B + C</span>
+        </label>
+        <label class="mc-option" id="q1-opt-b">
+          <input type="radio" name="q1" value="b" onchange="selectMC('1','b')" /> <span class="mc-option-text">A + B + D</span>
+        </label>
+        <label class="mc-option" id="q1-opt-c">
+          <input type="radio" name="q1" value="c" onchange="selectMC('1','c')" /> <span class="mc-option-text">A</span>
+        </label>
+        <label class="mc-option" id="q1-opt-d">
+          <input type="radio" name="q1" value="d" onchange="selectMC('1','d')" /> <span class="mc-option-text">A + B</span>
+        </label>
+      </div>
+      <div class="action-row">
+        <button class="btn-check" onclick="checkMC('1','c')">Check</button>
+        <button class="btn-hint" onclick="showHint('1')" aria-label="Show hint for question 1">Show hint</button>
+        <span class="status-badge" id="badge-1"></span>
+      </div>
+      <div class="feedback-area" id="feedback-1">
+        <div class="hint-box" id="hint-1">
+          <span class="hint-label">Hint</span>
+          Consumer surplus is the area above the price line and below demand. At P₂, which areas are above the P₂ line?
+        </div>
+        <div class="explanation-box" id="expl-1">
+          <span class="expl-label">Explanation</span>
+          At price P₂, consumer surplus is the triangle above P₂ and below the demand curve, from Q = 0 to Q₂. That's just <strong>area A</strong>. Areas B and C are below P₂, so they're not part of consumer surplus at that price. Area D is below P₁, even further from consumer surplus at P₂.
+        </div>
+      </div>
+    </article>
+
+    <!-- Q2 -->
+    <article class="q-card" id="q-2" aria-label="Question 2">
+      <div class="q-number">Question 2</div>
+      <div class="q-text">Refer to Figure 7-1. Suppose the price falls from P₂ to P₁. Area B represents the</div>
+      <div class="mc-options" role="radiogroup" aria-label="Answer choices for question 2">
+        <label class="mc-option" id="q2-opt-a">
+          <input type="radio" name="q2" value="a" onchange="selectMC('2','a')" /> <span class="mc-option-text">decrease in producer surplus from a downward-sloping demand curve</span>
+        </label>
+        <label class="mc-option" id="q2-opt-b">
+          <input type="radio" name="q2" value="b" onchange="selectMC('2','b')" /> <span class="mc-option-text">additional consumer surplus to initial consumers when the price falls</span>
+        </label>
+        <label class="mc-option" id="q2-opt-c">
+          <input type="radio" name="q2" value="c" onchange="selectMC('2','c')" /> <span class="mc-option-text">consumer surplus to new consumers who enter the market</span>
+        </label>
+        <label class="mc-option" id="q2-opt-d">
+          <input type="radio" name="q2" value="d" onchange="selectMC('2','d')" /> <span class="mc-option-text">decrease in producer surplus when price increases from P₁ to P₂</span>
+        </label>
+      </div>
+      <div class="action-row">
+        <button class="btn-check" onclick="checkMC('2','b')">Check</button>
+        <button class="btn-hint" onclick="showHint('2')" aria-label="Show hint for question 2">Show hint</button>
+        <span class="status-badge" id="badge-2"></span>
+      </div>
+      <div class="feedback-area" id="feedback-2">
+        <div class="hint-box" id="hint-2">
+          <span class="hint-label">Hint</span>
+          When price drops from P₂ to P₁, existing buyers (who were already buying at P₂) now pay less. What area captures their additional benefit?
+        </div>
+        <div class="explanation-box" id="expl-2">
+          <span class="expl-label">Explanation</span>
+          When price falls from P₂ to P₁, buyers who were already purchasing at P₂ (quantity Q₂) now pay a lower price. The rectangle <strong>B</strong> (between P₁ and P₂, from 0 to Q₂) represents the extra surplus those initial consumers gain. Area C represents the surplus gained by <em>new</em> consumers (Q₂ to Q₁) who enter the market at the lower price.
+        </div>
+      </div>
+    </article>
+
+    <!-- Figure 7-2 -->
+    <div class="figure-card" role="img" aria-label="Figure 7-2: Supply and demand graph with numerical values" style="margin-top:28px;">
+      <div class="figure-label">Figure 7-2</div>
+      <img src="figures/figure-7-2.png" alt="Figure 7-2: A supply and demand graph with a demand intercept at $150, equilibrium at Q=20 and P=$70" />
+    </div>
+
+    <!-- Q3 -->
+    <article class="q-card" id="q-3" aria-label="Question 3">
+      <div class="q-number">Question 3</div>
+      <div class="q-text">Refer to Figure 7-2. At the equilibrium price, consumer surplus is</div>
+      <div class="mc-options" role="radiogroup" aria-label="Answer choices for question 3">
+        <label class="mc-option" id="q3-opt-a">
+          <input type="radio" name="q3" value="a" onchange="selectMC('3','a')" /> <span class="mc-option-text">$600</span>
+        </label>
+        <label class="mc-option" id="q3-opt-b">
+          <input type="radio" name="q3" value="b" onchange="selectMC('3','b')" /> <span class="mc-option-text">$800</span>
+        </label>
+        <label class="mc-option" id="q3-opt-c">
+          <input type="radio" name="q3" value="c" onchange="selectMC('3','c')" /> <span class="mc-option-text">$200</span>
+        </label>
+        <label class="mc-option" id="q3-opt-d">
+          <input type="radio" name="q3" value="d" onchange="selectMC('3','d')" /> <span class="mc-option-text">$1,600</span>
+        </label>
+      </div>
+      <div class="action-row">
+        <button class="btn-check" onclick="checkMC('3','b')">Check</button>
+        <button class="btn-hint" onclick="showHint('3')" aria-label="Show hint for question 3">Show hint</button>
+        <span class="status-badge" id="badge-3"></span>
+      </div>
+      <div class="feedback-area" id="feedback-3">
+        <div class="hint-box" id="hint-3">
+          <span class="hint-label">Hint</span>
+          Read the graph: the demand intercept (price at Q = 0) is $150, equilibrium price is $70, and equilibrium quantity is 20. Use <code>½ × base × height</code>.
+        </div>
+        <div class="explanation-box" id="expl-3">
+          <span class="expl-label">Explanation</span>
+          From the graph, equilibrium is at Q = 20, P = $70. The demand curve intercepts the price axis at $150. CS = ½ × (150 − 70) × 20 = ½ × 80 × 20 = <strong>$800</strong>.
+        </div>
+      </div>
+    </article>
+
+    <!-- Q4 -->
+    <article class="q-card" id="q-4" aria-label="Question 4">
+      <div class="q-number">Question 4</div>
+      <div class="q-text">Refer to Figure 7-2. If the government imposes a price floor of $110, consumer surplus will decrease by</div>
+      <div class="mc-options" role="radiogroup" aria-label="Answer choices for question 4">
+        <label class="mc-option" id="q4-opt-a">
+          <input type="radio" name="q4" value="a" onchange="selectMC('4','a')" /> <span class="mc-option-text">$800</span>
+        </label>
+        <label class="mc-option" id="q4-opt-b">
+          <input type="radio" name="q4" value="b" onchange="selectMC('4','b')" /> <span class="mc-option-text">$200</span>
+        </label>
+        <label class="mc-option" id="q4-opt-c">
+          <input type="radio" name="q4" value="c" onchange="selectMC('4','c')" /> <span class="mc-option-text">$600</span>
+        </label>
+        <label class="mc-option" id="q4-opt-d">
+          <input type="radio" name="q4" value="d" onchange="selectMC('4','d')" /> <span class="mc-option-text">$400</span>
+        </label>
+      </div>
+      <div class="action-row">
+        <button class="btn-check" onclick="checkMC('4','c')">Check</button>
+        <button class="btn-hint" onclick="showHint('4')" aria-label="Show hint for question 4">Show hint</button>
+        <span class="status-badge" id="badge-4"></span>
+      </div>
+      <div class="feedback-area" id="feedback-4">
+        <div class="hint-box" id="hint-4">
+          <span class="hint-label">Hint</span>
+          At P = $110, find Q<sub>d</sub> from the graph (about 10 units). Calculate the new CS, then subtract from the original.
+        </div>
+        <div class="explanation-box" id="expl-4">
+          <span class="expl-label">Explanation</span>
+          At P = $110, demand is about Q = 10 (read from the graph where P = $110 meets the demand curve). New CS = ½ × (150 − 110) × 10 = ½ × 40 × 10 = <strong>$200</strong>. Original CS was $800. Decrease = $800 − $200 = <strong>$600</strong>.
+        </div>
+      </div>
+    </article>
+
+    <!-- Table 7-11 -->
+    <div class="figure-card" role="img" aria-label="Table 7-11: Supply and demand schedule" style="margin-top:28px;">
+      <div class="figure-label">Table 7-11</div>
+      <img src="figures/table-7-11.png" alt="Table 7-11: A supply and demand schedule showing prices from $2 to $8 with corresponding quantities demanded and supplied" />
+    </div>
+
+    <!-- Q5 -->
+    <article class="q-card" id="q-5" aria-label="Question 5">
+      <div class="q-number">Question 5</div>
+      <div class="q-text">Refer to Table 7-11. The equilibrium price is</div>
+      <div class="mc-options" role="radiogroup" aria-label="Answer choices for question 5">
+        <label class="mc-option" id="q5-opt-a">
+          <input type="radio" name="q5" value="a" onchange="selectMC('5','a')" /> <span class="mc-option-text">$10.00</span>
+        </label>
+        <label class="mc-option" id="q5-opt-b">
+          <input type="radio" name="q5" value="b" onchange="selectMC('5','b')" /> <span class="mc-option-text">$8.00</span>
+        </label>
+        <label class="mc-option" id="q5-opt-c">
+          <input type="radio" name="q5" value="c" onchange="selectMC('5','c')" /> <span class="mc-option-text">$6.00</span>
+        </label>
+        <label class="mc-option" id="q5-opt-d">
+          <input type="radio" name="q5" value="d" onchange="selectMC('5','d')" /> <span class="mc-option-text">$4.00</span>
+        </label>
+      </div>
+      <div class="action-row">
+        <button class="btn-check" onclick="checkMC('5','d')">Check</button>
+        <button class="btn-hint" onclick="showHint('5')" aria-label="Show hint for question 5">Show hint</button>
+        <span class="status-badge" id="badge-5"></span>
+      </div>
+      <div class="feedback-area" id="feedback-5">
+        <div class="hint-box" id="hint-5">
+          <span class="hint-label">Hint</span>
+          Equilibrium is where quantity demanded equals quantity supplied. Scan the table for the row where Q<sub>d</sub> = Q<sub>s</sub>.
+        </div>
+        <div class="explanation-box" id="expl-5">
+          <span class="expl-label">Explanation</span>
+          At P = $4.00, Q<sub>d</sub> = 12 and Q<sub>s</sub> = 12. This is the only price where quantity demanded equals quantity supplied, making it the equilibrium. At every other price, there's either excess demand (P &lt; $4) or excess supply (P &gt; $4).
+        </div>
+      </div>
+    </article>
+
+    <!-- Q6 -->
+    <article class="q-card" id="q-6" aria-label="Question 6">
+      <div class="q-number">Question 6</div>
+      <div class="q-text">Refer to Table 7-11. At a price of $2.00, total surplus is</div>
+      <div class="mc-options" role="radiogroup" aria-label="Answer choices for question 6">
+        <label class="mc-option" id="q6-opt-a">
+          <input type="radio" name="q6" value="a" onchange="selectMC('6','a')" /> <span class="mc-option-text">larger than at equilibrium</span>
+        </label>
+        <label class="mc-option" id="q6-opt-b">
+          <input type="radio" name="q6" value="b" onchange="selectMC('6','b')" /> <span class="mc-option-text">smaller than at equilibrium</span>
+        </label>
+        <label class="mc-option" id="q6-opt-c">
+          <input type="radio" name="q6" value="c" onchange="selectMC('6','c')" /> <span class="mc-option-text">the same as at equilibrium</span>
+        </label>
+        <label class="mc-option" id="q6-opt-d">
+          <input type="radio" name="q6" value="d" onchange="selectMC('6','d')" /> <span class="mc-option-text">insufficient information</span>
+        </label>
+      </div>
+      <div class="action-row">
+        <button class="btn-check" onclick="checkMC('6','b')">Check</button>
+        <button class="btn-hint" onclick="showHint('6')" aria-label="Show hint for question 6">Show hint</button>
+        <span class="status-badge" id="badge-6"></span>
+      </div>
+      <div class="feedback-area" id="feedback-6">
+        <div class="hint-box" id="hint-6">
+          <span class="hint-label">Hint</span>
+          At P = $2, Q<sub>d</sub> = 15 but Q<sub>s</sub> = 6. How many units actually trade? And what happens to the gains from units 7–12 that would have traded at equilibrium?
+        </div>
+        <div class="explanation-box" id="expl-6">
+          <span class="expl-label">Explanation</span>
+          At P = $2.00, Q<sub>s</sub> = 6, so only 6 units trade (sellers won't supply more). At equilibrium, 12 units trade. The 6 units between Q = 6 and Q = 12 represent <em>lost</em> gains from trade. Since quantity deviates from the efficient level (12 units), total surplus must be <strong>smaller than at equilibrium</strong>. Free markets maximize total surplus; any deviation reduces it.
+        </div>
+      </div>
+    </article>
+
+    <!-- Q7 standalone -->
+    <article class="q-card" id="q-7" aria-label="Question 7" style="margin-top:16px;">
+      <div class="q-number">Question 7</div>
+      <div class="q-text">A simultaneous increase in both demand and supply of tablets would imply that</div>
+      <div class="mc-options" role="radiogroup" aria-label="Answer choices for question 7">
+        <label class="mc-option" id="q7-opt-a">
+          <input type="radio" name="q7" value="a" onchange="selectMC('7','a')" /> <span class="mc-option-text">both value to consumers and cost of producing has increased</span>
+        </label>
+        <label class="mc-option" id="q7-opt-b">
+          <input type="radio" name="q7" value="b" onchange="selectMC('7','b')" /> <span class="mc-option-text">both value to consumers and cost of producing has decreased</span>
+        </label>
+        <label class="mc-option" id="q7-opt-c">
+          <input type="radio" name="q7" value="c" onchange="selectMC('7','c')" /> <span class="mc-option-text">value decreased, cost increased</span>
+        </label>
+        <label class="mc-option" id="q7-opt-d">
+          <input type="radio" name="q7" value="d" onchange="selectMC('7','d')" /> <span class="mc-option-text">value increased, cost decreased</span>
+        </label>
+      </div>
+      <div class="action-row">
+        <button class="btn-check" onclick="checkMC('7','d')">Check</button>
+        <button class="btn-hint" onclick="showHint('7')" aria-label="Show hint for question 7">Show hint</button>
+        <span class="status-badge" id="badge-7"></span>
+      </div>
+      <div class="feedback-area" id="feedback-7">
+        <div class="hint-box" id="hint-7">
+          <span class="hint-label">Hint</span>
+          What shifts demand right? What shifts supply right? Think about what each shift implies about underlying values and costs.
+        </div>
+        <div class="explanation-box" id="expl-7">
+          <span class="expl-label">Explanation</span>
+          Demand increases when consumers value the good more (willing to pay more at every quantity). Supply increases when production costs fall (sellers willing to supply more at every price). So: <strong>value to consumers increased</strong> (demand shifts right) AND <strong>cost of producing decreased</strong> (supply shifts right).
+        </div>
+      </div>
+    </article>
+
+    <!-- Q8 standalone -->
+    <article class="q-card" id="q-8" aria-label="Question 8">
+      <div class="q-number">Question 8</div>
+      <div class="q-text">Efficiency in a market is achieved when</div>
+      <div class="mc-options" role="radiogroup" aria-label="Answer choices for question 8">
+        <label class="mc-option" id="q8-opt-a">
+          <input type="radio" name="q8" value="a" onchange="selectMC('8','a')" /> <span class="mc-option-text">a social planner intervenes</span>
+        </label>
+        <label class="mc-option" id="q8-opt-b">
+          <input type="radio" name="q8" value="b" onchange="selectMC('8','b')" /> <span class="mc-option-text">the sum of producer surplus and consumer surplus is maximized</span>
+        </label>
+        <label class="mc-option" id="q8-opt-c">
+          <input type="radio" name="q8" value="c" onchange="selectMC('8','c')" /> <span class="mc-option-text">all firms produce at the same low cost</span>
+        </label>
+        <label class="mc-option" id="q8-opt-d">
+          <input type="radio" name="q8" value="d" onchange="selectMC('8','d')" /> <span class="mc-option-text">no buyer is willing to pay more than equilibrium price</span>
+        </label>
+      </div>
+      <div class="action-row">
+        <button class="btn-check" onclick="checkMC('8','b')">Check</button>
+        <button class="btn-hint" onclick="showHint('8')" aria-label="Show hint for question 8">Show hint</button>
+        <span class="status-badge" id="badge-8"></span>
+      </div>
+      <div class="feedback-area" id="feedback-8">
+        <div class="hint-box" id="hint-8">
+          <span class="hint-label">Hint</span>
+          Efficiency is about maximizing total gains from trade. What economic measure captures total gains?
+        </div>
+        <div class="explanation-box" id="expl-8">
+          <span class="expl-label">Explanation</span>
+          Market efficiency means maximizing <strong>total surplus</strong> (CS + PS). This happens at the free-market equilibrium where every unit with buyer value &gt; seller cost gets traded. A social planner would reach the same outcome, but markets do it automatically via the price mechanism — Adam Smith's "invisible hand."
+        </div>
+      </div>
+    </article>
+
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <!-- PART 3: TRUE OR FALSE                                       -->
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <div class="part-heading" style="margin-top:60px;">
+      <span class="part-label">Part 3</span>
+      <h2>True or False</h2>
+    </div>
+
+    <!-- Q9 -->
+    <article class="q-card" id="q-9" aria-label="Question 9">
+      <div class="q-number">Question 9</div>
+      <div class="q-text">Consumer surplus is the amount a buyer is willing to pay minus the amount they actually pay.</div>
+      <div class="tf-group" role="group" aria-label="True or False for question 9">
+        <button class="tf-btn" id="q9-true"  onclick="selectTF('9','true')"  aria-pressed="false">True</button>
+        <button class="tf-btn" id="q9-false" onclick="selectTF('9','false')" aria-pressed="false">False</button>
+      </div>
+      <div class="action-row">
+        <button class="btn-check" onclick="checkTF('9','true')">Check</button>
+        <button class="btn-hint" onclick="showHint('9')" aria-label="Show hint for question 9">Show hint</button>
+        <span class="status-badge" id="badge-9"></span>
+      </div>
+      <div class="feedback-area" id="feedback-9">
+        <div class="hint-box" id="hint-9">
+          <span class="hint-label">Hint</span>
+          This is the textbook definition. Willingness to pay − actual price = ?
+        </div>
+        <div class="explanation-box" id="expl-9">
+          <span class="expl-label">Explanation</span>
+          <strong>True.</strong> This is exactly the definition. CS for a single buyer = willingness to pay − market price. Summed across all buyers, CS = the area above the market price and below the demand curve.
+        </div>
+      </div>
+    </article>
+
+    <!-- Q10 -->
+    <article class="q-card" id="q-10" aria-label="Question 10">
+      <div class="q-number">Question 10</div>
+      <div class="q-text">An increase in supply that reduces price increases consumer surplus because (1) existing buyers gain more surplus and (2) new buyers enter.</div>
+      <div class="tf-group" role="group" aria-label="True or False for question 10">
+        <button class="tf-btn" id="q10-true"  onclick="selectTF('10','true')"  aria-pressed="false">True</button>
+        <button class="tf-btn" id="q10-false" onclick="selectTF('10','false')" aria-pressed="false">False</button>
+      </div>
+      <div class="action-row">
+        <button class="btn-check" onclick="checkTF('10','true')">Check</button>
+        <button class="btn-hint" onclick="showHint('10')" aria-label="Show hint for question 10">Show hint</button>
+        <span class="status-badge" id="badge-10"></span>
+      </div>
+      <div class="feedback-area" id="feedback-10">
+        <div class="hint-box" id="hint-10">
+          <span class="hint-label">Hint</span>
+          When price falls, existing buyers pay less (more surplus per unit). And at the lower price, some new buyers who wouldn't buy before now enter. Both true?
+        </div>
+        <div class="explanation-box" id="expl-10">
+          <span class="expl-label">Explanation</span>
+          <strong>True.</strong> Both effects are real. (1) Existing buyers were paying the old (higher) price. At the new lower price, they each gain more surplus. (2) The lower price makes the good affordable for buyers whose willingness to pay was between the old and new price — these new buyers enter the market and gain consumer surplus too.
+        </div>
+      </div>
+    </article>
+
+    <!-- Q11 -->
+    <article class="q-card" id="q-11" aria-label="Question 11">
+      <div class="q-number">Question 11</div>
+      <div class="q-text">An increase in price increases consumer surplus.</div>
+      <div class="tf-group" role="group" aria-label="True or False for question 11">
+        <button class="tf-btn" id="q11-true"  onclick="selectTF('11','true')"  aria-pressed="false">True</button>
+        <button class="tf-btn" id="q11-false" onclick="selectTF('11','false')" aria-pressed="false">False</button>
+      </div>
+      <div class="action-row">
+        <button class="btn-check" onclick="checkTF('11','false')">Check</button>
+        <button class="btn-hint" onclick="showHint('11')" aria-label="Show hint for question 11">Show hint</button>
+        <span class="status-badge" id="badge-11"></span>
+      </div>
+      <div class="feedback-area" id="feedback-11">
+        <div class="hint-box" id="hint-11">
+          <span class="hint-label">Hint</span>
+          When price goes up, what happens to the area above price and below demand?
+        </div>
+        <div class="explanation-box" id="expl-11">
+          <span class="expl-label">Explanation</span>
+          <strong>False.</strong> When price increases, the area above the price line and below the demand curve <em>shrinks</em>. Buyers pay more, so the gap between their willingness to pay and the actual price narrows. Higher price → less consumer surplus.
+        </div>
+      </div>
+    </article>
+
+    <!-- Q12 -->
+    <article class="q-card" id="q-12" aria-label="Question 12">
+      <div class="q-number">Question 12</div>
+      <div class="q-text">If the government imposes a binding price ceiling, producer surplus increases.</div>
+      <div class="tf-group" role="group" aria-label="True or False for question 12">
+        <button class="tf-btn" id="q12-true"  onclick="selectTF('12','true')"  aria-pressed="false">True</button>
+        <button class="tf-btn" id="q12-false" onclick="selectTF('12','false')" aria-pressed="false">False</button>
+      </div>
+      <div class="action-row">
+        <button class="btn-check" onclick="checkTF('12','false')">Check</button>
+        <button class="btn-hint" onclick="showHint('12')" aria-label="Show hint for question 12">Show hint</button>
+        <span class="status-badge" id="badge-12"></span>
+      </div>
+      <div class="feedback-area" id="feedback-12">
+        <div class="hint-box" id="hint-12">
+          <span class="hint-label">Hint</span>
+          A binding price ceiling is below equilibrium. Sellers are forced to accept a lower price...
+        </div>
+        <div class="explanation-box" id="expl-12">
+          <span class="expl-label">Explanation</span>
+          <strong>False.</strong> A binding price ceiling is set <em>below</em> equilibrium, forcing a lower price. This means sellers receive less per unit AND fewer units are sold (quantity supplied falls). Both effects reduce producer surplus. Sellers lose on price AND volume.
+        </div>
+      </div>
+    </article>
+
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <!-- SCORE SUMMARY                                               -->
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <div class="score-card" id="score-card" role="region" aria-label="Score summary" aria-live="polite">
+      <div class="score-title">Your Score</div>
+      <div class="score-number" id="score-display">0 <span>/ 17</span></div>
+      <div class="score-verdict" id="score-verdict">Keep Practicing</div>
+      <div class="score-track" aria-hidden="true">
+        <div class="score-fill" id="score-fill"></div>
+      </div>
+      <a class="return-link" href="index.html">Return to Lesson</a>
+    </div>
+
+  </main>
+
+  <script>
+    /* ================================================================
+       STATE & STORAGE
+    ================================================================ */
+    const TOTAL = 17;
+    const STORAGE_KEY = 'ch7-worksheet-v1';
+
+    // Per-question state machine: 'idle' | 'hinted' | 'revealed' | 'correct'
+    let state = {};
+    // Per-MC/TF: selected option
+    let selected = {};
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          state    = parsed.state    || {};
+          selected = parsed.selected || {};
+        }
+      } catch (e) { /* ignore */ }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ state, selected }));
+      } catch (e) { /* ignore */ }
+    }
+
+    /* ================================================================
+       PROGRESS
+    ================================================================ */
+    function countCorrect() {
+      return Object.values(state).filter(v => v === 'correct').length;
+    }
+
+    function updateProgress() {
+      const n = countCorrect();
+      const pct = (n / TOTAL) * 100;
+      document.getElementById('prog-label').textContent = `${n} / ${TOTAL} complete`;
+      document.getElementById('prog-fill').style.width = pct + '%';
+      // Score card
+      document.getElementById('score-display').innerHTML = `${n} <span>/ ${TOTAL}</span>`;
+      document.getElementById('score-fill').style.width = pct + '%';
+      const verdict = document.getElementById('score-verdict');
+      if (pct >= 88) {
+        verdict.textContent = 'Great Work!';
+        verdict.className = 'score-verdict great';
+      } else if (pct >= 65) {
+        verdict.textContent = 'Good Progress';
+        verdict.className = 'score-verdict good';
+      } else {
+        verdict.textContent = 'Keep Practicing';
+        verdict.className = 'score-verdict keep';
+      }
+    }
+
+    /* ================================================================
+       SHORT ANSWER CONFIG
+    ================================================================ */
+    const saConfig = {
+      'a': {
+        inputs: ['qa-price', 'qa-qty'],
+        answers: [20, 5],
+        tol: 0.5,
+      },
+      'b': {
+        inputs: ['qb-cs', 'qb-ps'],
+        answers: [25, 25],
+        tol: 0.5,
+      },
+      'c': {
+        inputs: ['qc-surplus'],
+        answers: [4],
+        tol: 0.5,
+      },
+      'd': {
+        inputs: ['qd-cs', 'qd-ps'],
+        answers: [9, 33],
+        tol: 0.5,
+      },
+      'e': {
+        inputs: ['qe-dwl'],
+        answers: [8],
+        tol: 0.5,
+      },
+    };
+
+    function parseNum(str) {
+      return parseFloat(String(str).replace(/[$,\s]/g, ''));
+    }
+
+    function checkSA(id) {
+      if (state[id] === 'correct') return;
+      const cfg = saConfig[id];
+      const vals = cfg.inputs.map(inp => parseNum(document.getElementById(inp).value));
+      const allCorrect = vals.every((v, i) => !isNaN(v) && Math.abs(v - cfg.answers[i]) <= cfg.tol);
+
+      if (allCorrect) {
+        markCorrect(id);
+      } else {
+        markWrong(id);
+      }
+      saveState();
+      updateProgress();
+    }
+
+    /* ================================================================
+       MULTIPLE CHOICE
+    ================================================================ */
+    function selectMC(qid, opt) {
+      if (state[qid] === 'correct' || state[qid] === 'revealed') return;
+      selected[qid] = opt;
+      // Update visual selection
+      ['a','b','c','d'].forEach(o => {
+        const el = document.getElementById(`q${qid}-opt-${o}`);
+        if (el) el.classList.toggle('selected', o === opt);
+      });
+      saveState();
+    }
+
+    function checkMC(qid, correct) {
+      if (state[qid] === 'correct') return;
+      const pick = selected[qid];
+      if (!pick) return; // nothing selected
+
+      if (pick === correct) {
+        markCorrect(qid);
+        // Highlight correct option green
+        const el = document.getElementById(`q${qid}-opt-${correct}`);
+        if (el) { el.classList.remove('selected'); el.classList.add('correct-answer'); }
+      } else {
+        markWrong(qid);
+        // Tint wrong choice red
+        const wrongEl = document.getElementById(`q${qid}-opt-${pick}`);
+        if (wrongEl) { wrongEl.classList.remove('selected'); wrongEl.classList.add('wrong-choice'); }
+        // After 2nd attempt, reveal correct
+        if (state[qid] === 'revealed') {
+          const correctEl = document.getElementById(`q${qid}-opt-${correct}`);
+          if (correctEl) correctEl.classList.add('correct-answer');
+        }
+      }
+      saveState();
+      updateProgress();
+    }
+
+    /* ================================================================
+       TRUE / FALSE
+    ================================================================ */
+    function selectTF(qid, val) {
+      if (state[qid] === 'correct' || state[qid] === 'revealed') return;
+      selected[qid] = val;
+      const trueBtn  = document.getElementById(`q${qid}-true`);
+      const falseBtn = document.getElementById(`q${qid}-false`);
+      trueBtn.classList.toggle('selected',  val === 'true');
+      falseBtn.classList.toggle('selected', val === 'false');
+      trueBtn.setAttribute('aria-pressed',  val === 'true'  ? 'true' : 'false');
+      falseBtn.setAttribute('aria-pressed', val === 'false' ? 'true' : 'false');
+      saveState();
+    }
+
+    function checkTF(qid, correct) {
+      if (state[qid] === 'correct') return;
+      const pick = selected[qid];
+      if (!pick) return;
+
+      if (pick === correct) {
+        markCorrect(qid);
+        const btn = document.getElementById(`q${qid}-${correct}`);
+        if (btn) { btn.classList.remove('selected'); btn.classList.add('correct-answer'); }
+      } else {
+        markWrong(qid);
+        const wrongBtn = document.getElementById(`q${qid}-${pick}`);
+        if (wrongBtn) { wrongBtn.classList.remove('selected'); wrongBtn.classList.add('wrong-choice'); }
+        if (state[qid] === 'revealed') {
+          const correctBtn = document.getElementById(`q${qid}-${correct}`);
+          if (correctBtn) correctBtn.classList.add('correct-answer');
+        }
+      }
+      saveState();
+      updateProgress();
+    }
+
+    /* ================================================================
+       STATE TRANSITIONS
+    ================================================================ */
+    function markCorrect(id) {
+      state[id] = 'correct';
+      const card = document.getElementById(`q-${id}`);
+      if (card) {
+        card.classList.remove('state-wrong', 'state-revealed');
+        card.classList.add('state-correct');
+        // Disable all inputs/buttons
+        card.querySelectorAll('input, .tf-btn').forEach(el => { el.disabled = true; });
+        card.querySelectorAll('.btn-check, .btn-hint').forEach(el => { el.disabled = true; });
+      }
+      showExplanation(id);
+      setBadge(id, 'correct');
+    }
+
+    function markWrong(id) {
+      const attempts = incrementAttempts(id);
+      if (attempts >= 2) {
+        state[id] = 'revealed';
+        const card = document.getElementById(`q-${id}`);
+        if (card) {
+          card.classList.remove('state-wrong');
+          card.classList.add('state-revealed');
+          card.querySelectorAll('input').forEach(el => { el.disabled = true; });
+          card.querySelectorAll('.tf-btn').forEach(el => { el.disabled = true; });
+          card.querySelectorAll('.btn-check').forEach(el => { el.disabled = true; });
+        }
+        showHint(id);      // ensure hint visible
+        showExplanation(id);
+        setBadge(id, 'wrong');
+      } else {
+        state[id] = 'hinted';
+        const card = document.getElementById(`q-${id}`);
+        if (card) {
+          card.classList.remove('state-correct', 'state-revealed');
+          card.classList.add('state-wrong');
+        }
+        showHint(id);
+        setBadge(id, 'wrong');
+      }
+    }
+
+    /* attempt counter stored in state object */
+    function incrementAttempts(id) {
+      const key = `__attempts_${id}`;
+      state[key] = (state[key] || 0) + 1;
+      return state[key];
+    }
+
+    function showHint(id) {
+      const el = document.getElementById(`hint-${id}`);
+      if (el) el.classList.add('show');
+    }
+
+    function showExplanation(id) {
+      const el = document.getElementById(`expl-${id}`);
+      if (el) el.classList.add('show');
+    }
+
+    function setBadge(id, type) {
+      const badge = document.getElementById(`badge-${id}`);
+      if (!badge) return;
+      badge.className = `status-badge ${type}`;
+      badge.textContent = type === 'correct' ? '✓ Correct' : '✗ Try again';
+      if (state[id] === 'revealed' && type === 'wrong') {
+        badge.textContent = '✗ See explanation';
+      }
+    }
+
+    /* ================================================================
+       RESTORE SAVED STATE
+    ================================================================ */
+    function restoreAll() {
+      Object.keys(state).forEach(id => {
+        if (id.startsWith('__')) return; // skip attempt counters
+        const s = state[id];
+
+        if (s === 'correct') {
+          const card = document.getElementById(`q-${id}`);
+          if (card) {
+            card.classList.add('state-correct');
+            card.querySelectorAll('input, .tf-btn, .btn-check, .btn-hint').forEach(el => { el.disabled = true; });
+          }
+          showExplanation(id);
+          setBadge(id, 'correct');
+        } else if (s === 'hinted' || s === 'revealed') {
+          const card = document.getElementById(`q-${id}`);
+          if (card) {
+            card.classList.add(s === 'revealed' ? 'state-revealed' : 'state-wrong');
+            if (s === 'revealed') {
+              card.querySelectorAll('input, .tf-btn, .btn-check').forEach(el => { el.disabled = true; });
+              showExplanation(id);
+            }
+          }
+          showHint(id);
+          setBadge(id, 'wrong');
+        }
+      });
+
+      // Restore SA input values
+      Object.keys(saConfig).forEach(id => {
+        if (state[id] && state[id] !== 'idle') {
+          // We don't store input values separately but we can restore from answers if correct
+          if (state[id] === 'correct') {
+            saConfig[id].inputs.forEach((inp, i) => {
+              const el = document.getElementById(inp);
+              if (el) el.value = saConfig[id].answers[i];
+            });
+          }
+        }
+      });
+
+      // Restore MC selections
+      Object.keys(selected).forEach(qid => {
+        const opt = selected[qid];
+        if (!opt) return;
+        const optEl = document.getElementById(`q${qid}-opt-${opt}`);
+        if (optEl) optEl.classList.add('selected');
+        // Restore radio checked state
+        const radio = document.querySelector(`input[name="q${qid}"][value="${opt}"]`);
+        if (radio) radio.checked = true;
+      });
+
+      // Restore TF button selections
+      ['9','10','11','12'].forEach(qid => {
+        const val = selected[qid];
+        if (!val) return;
+        const trueBtn  = document.getElementById(`q${qid}-true`);
+        const falseBtn = document.getElementById(`q${qid}-false`);
+        if (trueBtn)  trueBtn.classList.toggle('selected',  val === 'true');
+        if (falseBtn) falseBtn.classList.toggle('selected', val === 'false');
+      });
+
+      // Re-apply MC correct/wrong visual states
+      const mcCorrectMap = {
+        '1':'c','2':'b','3':'b','4':'c','5':'d','6':'b','7':'d','8':'b'
+      };
+      Object.keys(mcCorrectMap).forEach(qid => {
+        const s = state[qid];
+        const correct = mcCorrectMap[qid];
+        const pick = selected[qid];
+        if (s === 'correct') {
+          const el = document.getElementById(`q${qid}-opt-${correct}`);
+          if (el) { el.classList.remove('selected'); el.classList.add('correct-answer'); }
+          disableMCOptions(qid);
+        } else if (s === 'revealed' && pick) {
+          if (pick !== correct) {
+            const wrongEl = document.getElementById(`q${qid}-opt-${pick}`);
+            if (wrongEl) wrongEl.classList.add('wrong-choice');
+          }
+          const correctEl = document.getElementById(`q${qid}-opt-${correct}`);
+          if (correctEl) correctEl.classList.add('correct-answer');
+          disableMCOptions(qid);
+        }
+      });
+
+      // Re-apply TF correct/wrong visual states
+      const tfCorrectMap = { '9':'true','10':'true','11':'false','12':'false' };
+      Object.keys(tfCorrectMap).forEach(qid => {
+        const s = state[qid];
+        const correct = tfCorrectMap[qid];
+        const pick = selected[qid];
+        if (s === 'correct') {
+          const btn = document.getElementById(`q${qid}-${correct}`);
+          if (btn) { btn.classList.remove('selected'); btn.classList.add('correct-answer'); }
+        } else if (s === 'revealed' && pick) {
+          if (pick !== correct) {
+            const wrongBtn = document.getElementById(`q${qid}-${pick}`);
+            if (wrongBtn) wrongBtn.classList.add('wrong-choice');
+          }
+          const correctBtn = document.getElementById(`q${qid}-${correct}`);
+          if (correctBtn) correctBtn.classList.add('correct-answer');
+        }
+      });
+    }
+
+    function disableMCOptions(qid) {
+      ['a','b','c','d'].forEach(o => {
+        const el = document.getElementById(`q${qid}-opt-${o}`);
+        if (el) { el.classList.add('disabled'); }
+        const radio = document.querySelector(`input[name="q${qid}"][value="${o}"]`);
+        if (radio) radio.disabled = true;
+      });
+    }
+
+    /* Apply disableMCOptions on correct/revealed for MC questions */
+    const mcIds = ['1','2','3','4','5','6','7','8'];
+    function lockCorrectMCs() {
+      mcIds.forEach(qid => {
+        const s = state[qid];
+        if (s === 'correct' || s === 'revealed') {
+          disableMCOptions(qid);
+        }
+      });
+    }
+
+    /* ================================================================
+       INIT
+    ================================================================ */
+    loadState();
+    restoreAll();
+    lockCorrectMCs();
+    updateProgress();
+  </script>
+</body>
+</html>

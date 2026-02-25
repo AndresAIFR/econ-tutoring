@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Econ 101 Worksheet Ch5-Ch6 MCQ Preview</title>
+  <style>
+    :root {
+      --bg: #f5f5f0;
+      --ink: #101414;
+      --muted: #4c5552;
+      --card: #ffffff;
+      --line: #d9dfda;
+      --ok: #1f7a43;
+      --bad: #b1362e;
+      --accent: #0f5d7a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 0 0, #ffffff 0%, var(--bg) 55%);
+      line-height: 1.4;
+    }
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+    h1, h2 { margin: 0 0 8px; }
+    p { margin: 8px 0; color: var(--muted); }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(245,245,240,0.95);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 12px 0 18px;
+      backdrop-filter: blur(3px);
+    }
+    button {
+      border: 1px solid #bfcac4;
+      border-radius: 10px;
+      background: #fff;
+      color: var(--ink);
+      padding: 8px 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover { border-color: #8ea79b; }
+    .score {
+      margin-left: auto;
+      font-weight: 700;
+      align-self: center;
+      color: var(--accent);
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      margin: 12px 0;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.03);
+    }
+    .meta {
+      font-size: 12px;
+      color: #5a6f67;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+    .qtext {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+    .figure {
+      width: min(100%, 560px);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      margin: 8px 0 12px;
+      display: block;
+      background: #fff;
+    }
+    .opts label {
+      display: block;
+      border: 1px solid #e2e7e4;
+      border-radius: 10px;
+      padding: 8px 10px;
+      margin: 7px 0;
+      cursor: pointer;
+      color: #202826;
+    }
+    .opts label:hover { border-color: #b6c8bf; }
+    .result {
+      margin-top: 10px;
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid #dbe3de;
+      background: #fafcfa;
+      display: none;
+    }
+    .result.ok { border-color: #b7dec4; background: #edf8f1; color: var(--ok); }
+    .result.bad { border-color: #efc2bf; background: #fff1f0; color: var(--bad); }
+    .explain {
+      margin-top: 5px;
+      color: #30443d;
+      font-size: 14px;
+    }
+    .small {
+      font-size: 13px;
+      color: #5b6662;
+    }
+    .jump {
+      display: inline-block;
+      margin-top: 2px;
+    }
+    .jump a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .jump a:hover { text-decoration: underline; }
+    .divider {
+      border-top: 2px dashed #c8d2cd;
+      margin: 28px 0 22px;
+    }
+    .section-head {
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Econ 101 Worksheet Ch5 & Ch6: MCQ Preview</h1>
+    <p>Source: <code>/Users/andres/Downloads/Econ 101 Discussion Worksheet Ch5 and Ch6.pdf</code></p>
+    <p class="small">Note: Original short-answer items are converted to multiple choice. For consistency, interval elasticity uses midpoint method unless the prompt says "standard".</p>
+    <p class="small jump"><a href="#focusPage">Jump to Page 2: Tax Incidence + Weak Spots</a></p>
+
+    <div class="toolbar">
+      <button id="gradeAll">Grade All</button>
+      <button id="revealAll">Reveal Answers</button>
+      <button id="resetAll">Reset</button>
+      <span class="score" id="scoreText">Score: -</span>
+    </div>
+
+    <div id="quiz"></div>
+
+    <div class="divider"></div>
+
+    <h2 id="focusPage" class="section-head">Page 2: Focused Round (Tax Incidence + Trouble Spots)</h2>
+    <p class="small">Targeted practice on tax wedge, incidence, binding controls, midpoint setup, and point-vs-arc elasticity.</p>
+
+    <div class="toolbar">
+      <button id="gradeFocus">Grade Focus Round</button>
+      <button id="revealFocus">Reveal Focus Answers</button>
+      <button id="resetFocus">Reset Focus</button>
+      <span class="score" id="scoreFocus">Focus Score: -</span>
+    </div>
+
+    <div id="quizFocus"></div>
+  </div>
+
+  <script>
+    const coreQuestions = [
+      {
+        id: '1a',
+        section: 'Q1 Price Floors/Ceilings',
+        prompt: 'Given Qd = 20 - P and Qs = 2P - 4, for what range of prices will a price floor be binding?',
+        choices: ['Any price floor is binding', 'Price floor < $8', 'Price floor = $8', 'Price floor > $8'],
+        answer: 3,
+        explanation: 'Equilibrium: 20 - P = 2P - 4 => P = 8. A floor binds only if set above equilibrium.'
+      },
+      {
+        id: '1b',
+        section: 'Q1 Price Floors/Ceilings',
+        prompt: 'If the government sets a price floor at $10, what happens?',
+        choices: ['Shortage of 6 units', 'Surplus of 6 units', 'No shortage/surplus', 'Surplus of 10 units'],
+        answer: 1,
+        explanation: 'At P=10: Qd=10 and Qs=16. Surplus = Qs - Qd = 6.'
+      },
+      {
+        id: '2a',
+        section: 'Q2 Taxes',
+        prompt: 'For demand P = 500 - 10Q and supply P = 100 + (10/3)Q, what is the pre-tax equilibrium?',
+        choices: ['P=$200, Q=30', 'P=$220, Q=28', 'P=$180, Q=32', 'P=$250, Q=25'],
+        answer: 0,
+        explanation: 'Set demand=supply: 500-10Q = 100 + (10/3)Q => Q=30, then P=200.'
+      },
+      {
+        id: '2b',
+        section: 'Q2 Taxes',
+        prompt: 'A $50 excise tax is imposed on producers. Which inverse supply equation (buyer price form) is correct?',
+        choices: ['P = 50 + (10/3)Q', 'P = 100 + (10/3)Q', 'P = 150 + (10/3)Q', 'P = 200 + (10/3)Q'],
+        answer: 2,
+        explanation: 'Producers need $50 more from buyers at any Q: Pc = Ps + 50 => 100+(10/3)Q+50.'
+      },
+      {
+        id: '2c',
+        section: 'Q2 Taxes',
+        prompt: 'After the $50 producer tax, what are buyer price, seller received price, and quantity?',
+        choices: ['Pc=$225, Ps=$175, Q=27.5', 'Pc=$237.5, Ps=$187.5, Q=26.25', 'Pc=$250, Ps=$200, Q=25', 'Pc=$230, Ps=$180, Q=28'],
+        answer: 1,
+        explanation: 'Solve 500-10Q = 150+(10/3)Q => Q=26.25. Then Pc=237.5 and Ps=Pc-50=187.5.'
+      },
+      {
+        id: '3a',
+        section: 'Q3 Elasticity of Supply',
+        prompt: 'Price falls 23 -> 9 and quantity supplied falls 200 -> 130. Midpoint elasticity of supply is:',
+        choices: ['About 0.48 (inelastic)', 'About 1.00 (unit elastic)', 'About 1.89 (elastic)', 'About 0.12 (very inelastic)'],
+        answer: 0,
+        explanation: '%ΔQ = -70/165 = -0.4242; %ΔP = -14/16 = -0.875; Es = 0.4848.'
+      },
+      {
+        id: '3b',
+        section: 'Q3 Elasticity of Supply',
+        prompt: 'Using P on the vertical axis, what is the slope dP/dQ between those two points?',
+        choices: ['0.2', '5', '-0.2', '-5'],
+        answer: 0,
+        explanation: 'dP/dQ = (9-23)/(130-200) = (-14)/(-70)=0.2. (Inverse slope dQ/dP is 5.)'
+      },
+      {
+        id: '4a',
+        section: 'Q4 Income Elasticity',
+        prompt: 'Income rises 20,000 -> 30,000 while apple consumption falls 30 -> 28. Midpoint income elasticity is closest to:',
+        choices: ['+0.17', '-0.17', '-1.7', '+1.7'],
+        answer: 1,
+        explanation: 'Midpoint: %ΔQ = -2/29, %ΔY = 10000/25000=0.4 => Ey ≈ -0.172. Negative => inferior.'
+      },
+      {
+        id: '4b',
+        section: 'Q4 Income Elasticity',
+        prompt: 'Given the negative income elasticity above, apples are:',
+        choices: ['Normal good', 'Luxury good', 'Inferior good', 'Perfect complement'],
+        answer: 2,
+        explanation: 'Negative income elasticity means demand falls as income rises: inferior good.'
+      },
+      {
+        id: '5a',
+        section: 'Q5 Cross-Price Elasticity',
+        prompt: 'If cross-price elasticity of apples wrt oranges is -0.4 and orange price falls 3%, apple demand changes by:',
+        choices: ['-1.2%', '+1.2%', '-7.5%', '+7.5%'],
+        answer: 1,
+        explanation: '%ΔQ_apples = Exy × %ΔP_oranges = (-0.4)×(-3%) = +1.2%.'
+      },
+      {
+        id: '5b',
+        section: 'Q5 Cross-Price Elasticity',
+        prompt: 'If cross-price elasticity is negative, the two goods are:',
+        choices: ['Substitutes', 'Complements', 'Unrelated goods', 'Both normal goods'],
+        answer: 1,
+        explanation: 'Negative cross-price elasticity implies complements.'
+      },
+      {
+        id: '6a',
+        section: 'Q6 Demand Elasticity',
+        prompt: 'Demand Q = 50 - 0.5P. Price falls 60 -> 40. Using STANDARD percent changes, |Ed| is:',
+        choices: ['0.67', '1.00', '1.50', '2.50'],
+        answer: 2,
+        explanation: 'Q goes 20 -> 30. %ΔQ=10/20=50%. %ΔP=-20/60=-33.3%. |Ed|=1.5 (elastic).'
+      },
+      {
+        id: '6b',
+        section: 'Q6 Demand Elasticity',
+        prompt: 'Same change, using MIDPOINT method, |Ed| is:',
+        choices: ['0.67', '1.00', '1.50', '2.00'],
+        answer: 1,
+        explanation: '%ΔQ=10/25=40%. %ΔP=-20/50=-40%. |Ed|=1.0 (unit elastic).'
+      },
+      {
+        id: '7',
+        section: 'Q7 Figure 6-2',
+        image: '/Users/andres/ws_figure6_2.png',
+        prompt: 'Refer to Figure 6-2. The price ceiling ...',
+        choices: [
+          'causes a shortage of 60 units of the good.',
+          'makes it necessary for sellers to ration the good using a mechanism other than price.',
+          'is not binding because it is set below the equilibrium price.',
+          'causes a shortage of 30 units of the good.'
+        ],
+        answer: 1,
+        explanation: 'Ceiling is below equilibrium, so it is binding. At that price, Qd > Qs, so non-price rationing is required.'
+      },
+      {
+        id: '8',
+        section: 'Q8 Figure 6-2',
+        image: '/Users/andres/ws_figure6_2.png',
+        prompt: 'Refer to Figure 6-2. The price ceiling causes quantity ...',
+        choices: [
+          'supplied to exceed quantity demanded by 60 units.',
+          'supplied to exceed quantity demanded by 90 units.',
+          'demanded to exceed quantity supplied by 30 units.',
+          'demanded to exceed quantity supplied by 90 units.'
+        ],
+        answer: 3,
+        explanation: 'From the figure at ceiling price: Qd=180, Qs=90. Shortage = 90, so demanded exceeds supplied by 90.'
+      },
+      {
+        id: '9',
+        section: 'Q9 Figure 6-11',
+        image: '/Users/andres/ws_figure6_11.png',
+        prompt: 'Refer to Figure 6-11. With a $2 per-unit tax, new equilibrium quantity is:',
+        choices: ['Less than 60 units', '60 units', 'Between 60 units and 100 units', 'Greater than 100 units'],
+        answer: 2,
+        explanation: 'Tax wedge lowers quantity below 100 but above 60 in this figure (exactly 80 using linear equations).' 
+      },
+      {
+        id: '10',
+        section: 'Q10 Figure 6-11',
+        image: '/Users/andres/ws_figure6_11.png',
+        prompt: 'Refer to Figure 6-11. With a $2 per-unit tax, buyers pay:',
+        choices: ['$3', 'Between $3 and $5', 'Between $5 and $7', '$7'],
+        answer: 2,
+        explanation: 'Buyer price rises above $5 but below $7 in this figure (exactly $6 if solved).'
+      }
+    ];
+
+    const focusQuestions = [
+      {
+        id: 'f1',
+        section: 'Tax Wedge',
+        prompt: 'A per-unit tax of $2 is imposed. In competitive equilibrium, the gap between buyer price and seller price is:',
+        choices: ['$1', '$2', 'Depends on who is legally taxed', 'Depends on quantity traded'],
+        answer: 1,
+        explanation: 'By definition of a per-unit tax wedge: Pb - Ps = tax. The split of burden can vary, but the wedge size equals the tax.'
+      },
+      {
+        id: 'f2',
+        section: 'Incidence Concept',
+        prompt: 'Which statement is correct?',
+        choices: [
+          'Who writes the tax check always bears the full burden.',
+          'The less elastic side of the market bears more of the tax burden.',
+          'Producers always bear more because supply shifts.',
+          'Consumers always bear more because they pay the posted price.'
+        ],
+        answer: 1,
+        explanation: 'Economic incidence depends on relative elasticities, not statutory incidence.'
+      },
+      {
+        id: 'f3',
+        section: 'Incidence by Elasticity',
+        prompt: 'Demand is very inelastic and supply is elastic. Who bears most of the tax burden?',
+        choices: ['Buyers', 'Sellers', 'Government', 'Burden is always equal'],
+        answer: 0,
+        explanation: 'The less elastic side (buyers here) cannot adjust quantity much, so they bear more burden.'
+      },
+      {
+        id: 'f4',
+        section: 'Incidence by Elasticity',
+        prompt: 'Demand is elastic and supply is inelastic. Who bears most of the tax burden?',
+        choices: ['Buyers', 'Sellers', 'Equal split', 'Cannot be determined'],
+        answer: 1,
+        explanation: 'Now sellers are the less elastic side, so sellers bear more.'
+      },
+      {
+        id: 'f5',
+        section: 'Tax Effect',
+        prompt: 'Relative to no tax, a per-unit tax in a competitive market usually causes:',
+        choices: ['Higher quantity traded', 'Same quantity traded', 'Lower quantity traded', 'Quantity can only rise or stay same'],
+        answer: 2,
+        explanation: 'Taxes create a wedge and reduce mutually beneficial trades, so equilibrium quantity falls.'
+      },
+      {
+        id: 'f6',
+        section: 'Statutory vs Economic',
+        prompt: 'A tax is moved from sellers to buyers (same $/unit tax, same market). What changes?',
+        choices: [
+          'Economic outcome changes a lot',
+          'Only statutory incidence changes; economic outcome stays the same',
+          'Quantity rises',
+          'Deadweight loss disappears'
+        ],
+        answer: 1,
+        explanation: 'Tax-on-buyers vs tax-on-sellers is equivalent in competitive markets: same Pb, Ps, and Q after tax.'
+      },
+      {
+        id: 'f7',
+        section: 'Figure 6-11 Application',
+        image: '/Users/andres/ws_figure6_11.png',
+        prompt: 'Using Figure 6-11 geometry, a $2 tax implies new equilibrium quantity of:',
+        choices: ['60', '80', '100', '120'],
+        answer: 1,
+        explanation: 'From the linear lines in the figure, tax wedge of $2 moves quantity from 100 down to 80.'
+      },
+      {
+        id: 'f8',
+        section: 'Figure 6-11 Application',
+        image: '/Users/andres/ws_figure6_11.png',
+        prompt: 'At that $2-tax equilibrium in Figure 6-11, buyer price and seller-received price are:',
+        choices: ['Pb=$7, Ps=$5', 'Pb=$6, Ps=$4', 'Pb=$5, Ps=$3', 'Pb=$4, Ps=$2'],
+        answer: 1,
+        explanation: 'At Q=80 on the figure-based linear curves, demand gives Pb=6 and supply gives Ps=4, so wedge is 2.'
+      },
+      {
+        id: 'f9',
+        section: 'Midpoint Setup',
+        prompt: 'Price rises 10 -> 15 while quantity demanded falls 100 -> 60. Midpoint |Ed| is:',
+        choices: ['0.80', '1.00', '1.25', '1.67'],
+        answer: 2,
+        explanation: '%ΔQ=-40/80=-0.5, %ΔP=5/12.5=0.4, so Ed=-1.25 and |Ed|=1.25.'
+      },
+      {
+        id: 'f10',
+        section: 'Standard vs Midpoint',
+        prompt: 'For Q = 50 - 0.5P and price 60 -> 40, which pair is correct: (standard |Ed|, midpoint |Ed|)?',
+        choices: ['(1.0, 1.5)', '(1.5, 1.0)', '(0.67, 1.5)', '(1.5, 1.5)'],
+        answer: 1,
+        explanation: 'Standard uses initial base and gives 1.5. Midpoint gives symmetric answer 1.0.'
+      },
+      {
+        id: 'f11',
+        section: 'Point vs Arc Elasticity',
+        prompt: 'Point elasticity is best described as:',
+        choices: [
+          'Elasticity using two endpoints and midpoint averages',
+          'Elasticity at one exact point on the demand curve',
+          'Another name for slope dQ/dP',
+          'Only valid for supply curves'
+        ],
+        answer: 1,
+        explanation: 'Point elasticity measures local responsiveness at a specific point, often using Ed = (dQ/dP)*(P/Q).'
+      },
+      {
+        id: 'f12',
+        section: 'Absolute Value Rule',
+        prompt: 'Which statement about absolute value is correct in intro micro?',
+        choices: [
+          'Always drop sign for all elasticities',
+          'Use absolute value for classifying price elasticity of demand; keep signs for income/cross-price interpretation',
+          'Never use absolute value',
+          'Use absolute value only for cross-price elasticity'
+        ],
+        answer: 1,
+        explanation: 'For Ed classification we use |Ed|, but signs of Ey and Exy carry economic meaning (normal/inferior, substitutes/complements).'
+      },
+      {
+        id: 'f13',
+        section: 'Binding Controls',
+        prompt: 'A price ceiling is binding when:',
+        choices: ['Ceiling > equilibrium price', 'Ceiling = equilibrium price', 'Ceiling < equilibrium price', 'Always binding'],
+        answer: 2,
+        explanation: 'A ceiling binds only if it is below the free-market equilibrium price.'
+      },
+      {
+        id: 'f14',
+        section: 'Shortage/Surplus Setup',
+        prompt: 'Under a binding price floor, the correct excess quantity expression is:',
+        choices: ['Shortage = Qd - Qs', 'Surplus = Qs - Qd', 'Surplus = Qd - Qs', 'No excess quantity'],
+        answer: 1,
+        explanation: 'At a binding floor, quantity supplied exceeds quantity demanded, so surplus is Qs - Qd.'
+      }
+    ];
+
+    const letters = ['A', 'B', 'C', 'D'];
+    
+    function initQuiz(config) {
+      const {
+        questions,
+        containerId,
+        scoreId,
+        gradeBtnId,
+        revealBtnId,
+        resetBtnId,
+        prefix
+      } = config;
+      const container = document.getElementById(containerId);
+
+      function render() {
+        container.innerHTML = '';
+        questions.forEach((q, idx) => {
+          const card = document.createElement('section');
+          card.className = 'card';
+          card.dataset.qid = q.id;
+
+          const optsHtml = q.choices.map((c, i) => `
+            <label>
+              <input type="radio" name="${prefix}_${q.id}" value="${i}" />
+              <b>${letters[i]}.</b> ${c}
+            </label>`).join('');
+
+          card.innerHTML = `
+            <div class="meta">${q.section}</div>
+            <div class="qtext"><b>${idx + 1}.</b> ${q.prompt}</div>
+            ${q.image ? `<img class="figure" src="${q.image}" alt="Figure for question ${q.id}" />` : ''}
+            <div class="opts">${optsHtml}</div>
+            <button data-action="check">Check Answer</button>
+            <div class="result" id="res_${prefix}_${q.id}"></div>
+          `;
+          container.appendChild(card);
+        });
+      }
+
+      function checkOne(qid) {
+        const q = questions.find((x) => x.id === qid);
+        const picked = document.querySelector(`input[name="${prefix}_${q.id}"]:checked`);
+        const box = document.getElementById(`res_${prefix}_${q.id}`);
+        box.style.display = 'block';
+
+        if (!picked) {
+          box.className = 'result bad';
+          box.innerHTML = 'Pick an option first.';
+          return { attempted: false, correct: false };
+        }
+
+        const pickedIdx = Number(picked.value);
+        const isRight = pickedIdx === q.answer;
+        box.className = `result ${isRight ? 'ok' : 'bad'}`;
+        box.innerHTML = `${isRight ? 'Correct' : 'Not correct'} - Answer: <b>${letters[q.answer]}</b>. ${q.choices[q.answer]}
+          <div class="explain">${q.explanation}</div>`;
+        return { attempted: true, correct: isRight };
+      }
+
+      function gradeAll() {
+        let attempted = 0;
+        let correct = 0;
+        questions.forEach((q) => {
+          const r = checkOne(q.id);
+          if (r.attempted) attempted += 1;
+          if (r.correct) correct += 1;
+        });
+        document.getElementById(scoreId).textContent = `Score: ${correct}/${questions.length} (attempted ${attempted})`;
+      }
+
+      function revealAll() {
+        questions.forEach((q) => {
+          const box = document.getElementById(`res_${prefix}_${q.id}`);
+          box.style.display = 'block';
+          box.className = 'result ok';
+          box.innerHTML = `Answer: <b>${letters[q.answer]}</b>. ${q.choices[q.answer]}
+            <div class="explain">${q.explanation}</div>`;
+        });
+        document.getElementById(scoreId).textContent = 'Score: answers revealed';
+      }
+
+      function resetAll() {
+        questions.forEach((q) => {
+          document.querySelectorAll(`input[name="${prefix}_${q.id}"]`).forEach((el) => {
+            el.checked = false;
+          });
+          const box = document.getElementById(`res_${prefix}_${q.id}`);
+          box.style.display = 'none';
+          box.className = 'result';
+          box.innerHTML = '';
+        });
+        document.getElementById(scoreId).textContent = 'Score: -';
+      }
+
+      render();
+
+      container.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-action="check"]');
+        if (!btn) return;
+        const card = e.target.closest('.card');
+        const qid = card.dataset.qid;
+        checkOne(qid);
+      });
+
+      document.getElementById(gradeBtnId).addEventListener('click', gradeAll);
+      document.getElementById(revealBtnId).addEventListener('click', revealAll);
+      document.getElementById(resetBtnId).addEventListener('click', resetAll);
+    }
+
+    initQuiz({
+      questions: coreQuestions,
+      containerId: 'quiz',
+      scoreId: 'scoreText',
+      gradeBtnId: 'gradeAll',
+      revealBtnId: 'revealAll',
+      resetBtnId: 'resetAll',
+      prefix: 'core'
+    });
+
+    initQuiz({
+      questions: focusQuestions,
+      containerId: 'quizFocus',
+      scoreId: 'scoreFocus',
+      gradeBtnId: 'gradeFocus',
+      revealBtnId: 'revealFocus',
+      resetBtnId: 'resetFocus',
+      prefix: 'focus'
+    });
+  </script>
+</body>
+</html>

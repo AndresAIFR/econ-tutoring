@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Microeconomics Chapter 7 Fast Graphs</title>
+  <style>
+    :root {
+      --bg: #f6f7f2;
+      --ink: #102018;
+      --muted: #4a5a51;
+      --demand: #1261a0;
+      --supply: #b43f2f;
+      --price: #222;
+      --cs: #8fd3ff;
+      --ps: #ffb39f;
+      --lost: #ffd54f;
+    }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 20% 0%, #ffffff 0%, var(--bg) 60%);
+      color: var(--ink);
+      font-family: "Avenir Next", "Trebuchet MS", sans-serif;
+      line-height: 1.35;
+      padding: 24px;
+    }
+    h1, h2 { margin: 0 0 10px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      align-items: start;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #d8ded6;
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    }
+    p { margin: 8px 0; color: var(--muted); }
+    svg { width: 100%; height: auto; display: block; background: #fff; }
+    .legend { font-size: 13px; color: var(--muted); }
+    .k { font-weight: 700; color: var(--ink); }
+    ul { margin: 8px 0 0 18px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <h1>Chapter 7: Consumers, Producers, and Market Efficiency</h1>
+  <p><span class="k">Willingness to pay</span> = the most a buyer would pay for one unit. <span class="k">Cost</span> = the least a seller would accept for one unit.</p>
+
+  <div class="grid">
+    <section class="card">
+      <h2>1) Equilibrium and Surplus</h2>
+      <svg viewBox="0 0 420 320" aria-label="Equilibrium graph with consumer and producer surplus">
+        <line x1="40" y1="280" x2="390" y2="280" stroke="#000" stroke-width="2"/>
+        <line x1="40" y1="280" x2="40" y2="20" stroke="#000" stroke-width="2"/>
+        <text x="200" y="305" font-size="13">Quantity</text>
+        <text x="6" y="22" font-size="13">Price</text>
+
+        <!-- Demand -->
+        <line x1="70" y1="55" x2="360" y2="255" stroke="var(--demand)" stroke-width="3"/>
+        <text x="327" y="245" font-size="13" fill="var(--demand)">Demand</text>
+
+        <!-- Supply -->
+        <line x1="70" y1="250" x2="360" y2="80" stroke="var(--supply)" stroke-width="3"/>
+        <text x="315" y="95" font-size="13" fill="var(--supply)">Supply</text>
+
+        <!-- Equilibrium point roughly intersection -->
+        <circle cx="205" cy="147" r="4" fill="#000"/>
+        <line x1="205" y1="147" x2="205" y2="280" stroke="#444" stroke-dasharray="5 4"/>
+        <line x1="40" y1="147" x2="205" y2="147" stroke="#444" stroke-dasharray="5 4"/>
+        <text x="210" y="292" font-size="12">Equilibrium quantity</text>
+        <text x="44" y="142" font-size="12">Equilibrium price</text>
+
+        <!-- Consumer surplus triangle -->
+        <polygon points="70,55 205,147 40,147" fill="var(--cs)" opacity="0.6"/>
+        <text x="85" y="110" font-size="12">Consumer surplus</text>
+
+        <!-- Producer surplus triangle -->
+        <polygon points="40,147 205,147 70,250" fill="var(--ps)" opacity="0.65"/>
+        <text x="82" y="188" font-size="12">Producer surplus</text>
+      </svg>
+      <p class="legend">At equilibrium, total surplus (consumer + producer) is maximized when there is no market failure.</p>
+    </section>
+
+    <section class="card">
+      <h2>2) Quantity Too Low</h2>
+      <svg viewBox="0 0 420 320" aria-label="Underproduction deadweight loss">
+        <line x1="40" y1="280" x2="390" y2="280" stroke="#000" stroke-width="2"/>
+        <line x1="40" y1="280" x2="40" y2="20" stroke="#000" stroke-width="2"/>
+
+        <line x1="70" y1="55" x2="360" y2="255" stroke="var(--demand)" stroke-width="3"/>
+        <line x1="70" y1="250" x2="360" y2="80" stroke="var(--supply)" stroke-width="3"/>
+
+        <circle cx="205" cy="147" r="4" fill="#000"/>
+        <line x1="145" y1="20" x2="145" y2="280" stroke="#111" stroke-width="2"/>
+        <text x="115" y="295" font-size="12">Actual quantity</text>
+        <text x="210" y="295" font-size="12">Efficient quantity</text>
+
+        <polygon points="145,185 205,147 145,147" fill="var(--lost)" opacity="0.75"/>
+        <text x="150" y="164" font-size="12">Lost gains</text>
+      </svg>
+      <p class="legend">If quantity is below efficient level, some units have buyer value above seller cost, but they are not traded.</p>
+    </section>
+
+    <section class="card">
+      <h2>3) Quantity Too High</h2>
+      <svg viewBox="0 0 420 320" aria-label="Overproduction deadweight loss">
+        <line x1="40" y1="280" x2="390" y2="280" stroke="#000" stroke-width="2"/>
+        <line x1="40" y1="280" x2="40" y2="20" stroke="#000" stroke-width="2"/>
+
+        <line x1="70" y1="55" x2="360" y2="255" stroke="var(--demand)" stroke-width="3"/>
+        <line x1="70" y1="250" x2="360" y2="80" stroke="var(--supply)" stroke-width="3"/>
+
+        <circle cx="205" cy="147" r="4" fill="#000"/>
+        <line x1="265" y1="20" x2="265" y2="280" stroke="#111" stroke-width="2"/>
+        <text x="235" y="295" font-size="12">Actual quantity</text>
+        <text x="210" y="295" font-size="12">Efficient quantity</text>
+
+        <polygon points="205,147 265,147 265,186" fill="var(--lost)" opacity="0.75"/>
+        <text x="221" y="167" font-size="12">Lost gains</text>
+      </svg>
+      <p class="legend">If quantity is above efficient level, extra units have seller cost above buyer value.</p>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top:20px;">
+    <h2>Fast Checks</h2>
+    <ul>
+      <li>Producer surplus is usually positive at equilibrium; it is not zero for all sellers.</li>
+      <li>The highest-cost seller at equilibrium is often near zero producer surplus on the last unit.</li>
+      <li>Consumer surplus area is under demand and above price, from quantity 0 to quantity sold.</li>
+      <li>Efficiency means max total surplus; equality means fairness of distribution. They are different goals.</li>
+    </ul>
+  </section>
+</body>
+</html>
