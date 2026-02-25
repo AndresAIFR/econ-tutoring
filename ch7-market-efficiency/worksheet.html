@@ -716,6 +716,27 @@
       color: #fff;
     }
 
+    .reset-btn {
+      display: inline-block;
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 8px 22px;
+      border: 1.5px solid var(--card-border);
+      border-radius: 20px;
+      background: none;
+      cursor: pointer;
+      margin-left: 10px;
+      transition: background 0.18s, color 0.18s, border-color 0.18s;
+    }
+
+    .reset-btn:hover {
+      border-color: var(--dwl);
+      color: var(--dwl);
+    }
+
     /* ── Responsive ───────────────────────────────────────────────── */
     @media (max-width: 540px) {
       body { font-size: 16px; }
@@ -1364,6 +1385,7 @@
         <div class="score-fill" id="score-fill"></div>
       </div>
       <a class="return-link" href="index.html">Return to Lesson</a>
+      <button class="reset-btn" onclick="resetWorksheet()">Start Over</button>
     </div>
 
   </main>
@@ -1395,6 +1417,12 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ state, selected }));
       } catch (e) { /* ignore */ }
+    }
+
+    function resetWorksheet() {
+      if (!confirm('Reset the entire worksheet? All progress will be lost.')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
     }
 
     /* ================================================================
