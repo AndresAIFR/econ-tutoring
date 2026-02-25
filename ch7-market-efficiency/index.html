@@ -678,8 +678,8 @@
           <!-- CS triangle: (Q=0,P=30)→(Q=5,P=20)→(Q=0,P=20) -->
           <polygon points="55,30 130,90 55,90" fill="rgba(74,144,217,0.25)" stroke="rgba(74,144,217,0.5)" stroke-width="1"/>
 
-          <!-- Price line at P=20 (stops before label) -->
-          <line x1="55" y1="90" x2="260" y2="90" stroke="#888" stroke-width="1.5" stroke-dasharray="5,4"/>
+          <!-- Price line at P=20 (starts at equilibrium, extends right to label) -->
+          <line x1="130" y1="90" x2="260" y2="90" stroke="#888" stroke-width="1.5" stroke-dasharray="5,4"/>
 
           <!-- Demand: P=30−2Q → (Q=0,P=30)=(55,30) to (Q=15,P=0)=(280,210) -->
           <line x1="55" y1="30" x2="280" y2="210" stroke="var(--cs)" stroke-width="2.5"/>
@@ -756,8 +756,8 @@
           <!-- PS triangle: (Q=0,P=20)→(Q=5,P=20)→(Q=0,P=10) -->
           <polygon points="55,90 130,90 55,150" fill="rgba(217,108,74,0.25)" stroke="rgba(217,108,74,0.5)" stroke-width="1"/>
 
-          <!-- Price line at P=20 (stops before label) -->
-          <line x1="55" y1="90" x2="260" y2="90" stroke="#888" stroke-width="1.5" stroke-dasharray="5,4"/>
+          <!-- Price line at P=20 (starts at equilibrium, extends right to label) -->
+          <line x1="130" y1="90" x2="260" y2="90" stroke="#888" stroke-width="1.5" stroke-dasharray="5,4"/>
 
           <!-- Demand (dashed): (Q=0,P=30)=(55,30) to (Q=15,P=0)=(280,210) -->
           <line x1="55" y1="30" x2="280" y2="210" stroke="var(--cs)" stroke-width="2.5" stroke-dasharray="6,3"/>
